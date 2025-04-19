@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Предстоящие турниры</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Предстоящие турниры</h1>
+  </header>
+
+  <section id="tournaments">
+    <ul id="tournamentList"></ul>
+  </section>
+
+  <script>
+    // Получаем список турниров с сервера
+    fetch('/api/tournaments')
+      .then(response => response.json())
+      .then(data => {
+        const tournamentList = document.getElementById('tournamentList');
+        
+        // Если турниры есть
+        if (data.length) {
+          data.forEach(tournament => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+              <h3>${tournament.name}</h3>
+              <p>${tournament.date}</p>
+              <p>${tournament.location}</p>
+            `;
+            tournamentList.appendChild(listItem);
+          });
+        } else {
+          tournamentList.innerHTML = '<li>Нет предстоящих турниров.</li>';
+        }
+      })
+      .catch(error => {
+        console.error('Ошибка при загрузке турниров:', error);
+      });
+  </script>
+</body>
+</html>

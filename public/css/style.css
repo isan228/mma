@@ -1,0 +1,40 @@
+body {
+    background-color: #111;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  h1, h2 {
+    color: #e10600; /* красный */
+  }
+  
+  img {
+    border: 3px solid #e10600;
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+  
+  p {
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  li {
+    background-color: #222;
+    margin: 10px 0;
+    padding: 10px;
+    border-left: 5px solid #e10600;
+    transition: 0.3s;
+  }
+  
+  li:hover {
+    background-color: #333;
+  }
+  

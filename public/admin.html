@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админка</title>
+  <!-- Подключаем Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 20px;
+    }
+    .tab {
+      display: none;
+    }
+    .tab.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="text-center mb-4">Админ-панель</h1>
+
+  <nav class="nav justify-content-center mb-4">
+    <a class="nav-link active" href="javascript:void(0);" onclick="showTab('fighters')">Бойцы</a>
+    <a class="nav-link" href="javascript:void(0);" onclick="showTab('tournaments')">Турниры</a>
+    <a class="nav-link" href="javascript:void(0);" onclick="showTab('teams')">Команды</a>
+    <a class="nav-link" href="javascript:void(0);" onclick="showTab('matches')">Матчи</a>
+    <a class="nav-link" href="javascript:void(0);" onclick="showTab('news')">Новости</a>
+    <a class="nav-link" href="javascript:void(0);" onclick="showTab('trainers')">Тренеры</a>
+  </nav>
+
+  <div id="fighters" class="tab">
+    <form id="fighter-form">
+      <div class="mb-3">
+        <label for="name" class="form-label">Имя бойца</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+      </div>
+      <div class="mb-3">
+        <label for="team" class="form-label">Команда</label>
+        <input type="text" id="team" class="form-control" name="team" required>
+      </div>
+      <div class="mb-3">
+        <label for="record" class="form-label">Проф. рекорд</label>
+        <input type="text" id="record" class="form-control" name="record" required>
+      </div>
+      <div class="mb-3">
+        <label for="age" class="form-label">Возраст</label>
+        <input type="number" class="form-control" id="age" name="age" required>
+      </div>
+      <div class="mb-3">
+        <label for="country" class="form-label">Страна</label>
+        <input type="text" class="form-control" id="country" name="country" required>
+      </div>
+      <div class="mb-3">
+        <label for="height" class="form-label">Рост (см)</label>
+        <input type="number" class="form-control" id="height" name="height" required>
+      </div>
+      <div class="mb-3">
+        <label for="weight" class="form-label">Вес (кг)</label>
+        <input type="number" class="form-control" id="weight" name="weight" required>
+      </div>
+      <div class="mb-3">
+        <label for="category" class="form-label">Категория</label>
+        <input type="text" class="form-control" id="category" name="category" required>
+      </div>
+      <div class="mb-3">
+        <label for="style" class="form-label">Стиль</label>
+        <input type="text" class="form-control" id="style" name="style" required>
+      </div>
+      <div class="mb-3">
+        <label for="photo_url" class="form-label">Фото URL</label>
+        <input type="text" class="form-control" id="photo_url" name="photo_url">
+      </div>
+      <button type="submit" class="btn btn-primary">Добавить бойца</button>
+    </form>
+    <h2>Список бойцов</h2>
+    <ul id="fighters-list" class="list-group"></ul>
+  </div>
+  <div id="trainers" class="tab">
+    <form id="trainer-form">
+      <div class="mb-3">
+        <label for="trainer-name" class="form-label">Имя тренера</label>
+        <input type="text" class="form-control" id="trainer-name" name="name" required>
+      </div>
+      <div class="mb-3">
+        <label for="trainer-team" class="form-label">Команда</label>
+        <input type="text" id="trainer-team" class="form-control" name="team" required>
+      </div>
+      <div class="mb-3">
+        <label for="trainer-experience" class="form-label">Опыт</label>
+        <input type="text" id="trainer-experience" class="form-control" name="experience" required>
+      </div>
+      <div class="mb-3">
+        <label for="trainer-photo" class="form-label">Фото тренера</label>
+        <input type="text" id="trainer-photo" class="form-control" name="photo_url">
+      </div>
+      <button type="submit" class="btn btn-primary">Добавить тренера</button>
+    </form>
+    <h2>Список тренеров</h2>
+    <div id="trainer-list"></div>
+  </div>
+
+  <div id="tournaments" class="tab">
+    <h2>Добавить турнир</h2>
+    <form id="tournament-form" class="mb-4">
+      <div class="mb-3">
+        <input type="text" name="title" class="form-control" placeholder="Название турнира" required>
+      </div>
+      <div class="mb-3">
+        <input type="datetime-local" name="date" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <input type="text" name="location" class="form-control" placeholder="Место проведения" required>
+      </div>
+      <div class="mb-3">
+        <textarea name="description" class="form-control" placeholder="Описание турнира" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Добавить турнир</button>
+    </form>
+
+    <h2>Список турниров</h2>
+    <ul id="tournament-list" class="list-group"></ul>
+  </div>
+
+  <div id="matches" class="tab">
+    <h2>Добавить матч</h2>
+    <form id="match-form" class="mb-4">
+      <div class="mb-3">
+        <select name="fighterId" class="form-control" required>
+          <option value="">Выберите бойца</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <select name="opponentId" class="form-control" required>
+          <option value="">Выберите соперника</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <select name="tournamentId" class="form-control" required>
+          <option value="">Выберите турнир</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <input type="text" name="weightCategory" class="form-control" placeholder="Весовая категория" required>
+      </div>
+      <div class="mb-3">
+        <input type="datetime-local" name="matchDate" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <textarea name="description" class="form-control" placeholder="Описание матча" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Добавить матч</button>
+    </form>
+
+    <h2>Список матчей</h2>
+    <ul id="match-list" class="list-group"></ul>
+  </div>
+  <div id="teams" class="tab">
+    <h2>Добавить команду</h2>
+    <form id="team-form" class="mb-4">
+      <div class="mb-3">
+        <label for="team-name" class="form-label">Название команды</label>
+        <input type="text" class="form-control" id="team-name" name="name" required>
+      </div>
+      <div class="mb-3">
+        <label for="team-description" class="form-label">Описание</label>
+        <textarea class="form-control" id="team-description" name="description"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Добавить команду</button>
+    </form>
+  
+    <h2>Список команд</h2>
+    <ul id="team-list" class="list-group"></ul>
+  </div>
+
+  <div id="news" class="tab">
+    <h2>Добавить новость</h2>
+    <form id="news-form" class="mb-4">
+      <div class="mb-3">
+        <input type="text" name="title" class="form-control" placeholder="Заголовок новости" required>
+      </div>
+      <div class="mb-3">
+        <textarea name="content" class="form-control" placeholder="Содержание новости" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Добавить новость</button>
+    </form>
+
+    <h2>Список новостей</h2>
+    <ul id="news-list" class="list-group"></ul>
+  </div>
+
+  <script>
+    function showTab(tabId) {
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => tab.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    showTab('fighters');  // Показываем вкладку бойцов по умолчанию
+
+  
+  </script>
+ <script src="js/fighter.js"></script>
+ <script src="js/trainer.js"></script>
+  <!-- Подключаем Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
