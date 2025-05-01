@@ -1,100 +1,334 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Боец</title>
-  <!-- Bootstrap -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Карточка бойца</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <style>
-    body {
-      background-color: #111;
-      color: #fff;
-      font-family: Arial, sans-serif;
+   html, body {
+      height: 100%;
+      margin: 0;
+      background: radial-gradient(circle at center, #1a1a1a, #0d0d0d);
+      color: #7d2020;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    .card {
+    .navbar {
       background-color: #1a1a1a;
-      border: 1px solid red;
+      border-bottom: 1px solid rgba(255, 0, 0, 0.4);
     }
 
-    .bg-dark {
-      background-color: #1a1a1a !important;
+    .navbar-brand img {
+      height: 80px;
     }
 
-    img {
-      border-radius: 10px;
-      max-width: 100%;
-      height: auto;
-      border: 1px solid #cc0000;
+    .nav-link {
+      color: #fff !important;
     }
 
-    p, h4 {
+    .nav-link:hover {
+      color: #ff1a1a !important;
+    }
+
+    /* Main content */
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+
+    .fighter-card {
+      background: linear-gradient(135deg, #1c1c1c, #111);
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(255, 0, 0, 0.3);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .fighter-card:hover {
+      transform: scale(1.03);
+    }
+
+    .fighter-name {
+      color: #ff4d4d;
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .fighter-photo {
+      width: 250px;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 5px solid #ff4d4d;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+      margin-bottom: 20px;
+    }
+
+    .stats-table {
+    width: 100%;
+    margin-top: 20px;
+    background-color: #1c1c1c;
+    color: #fff;
+    border-radius: 10px;
+    border-collapse: collapse;
+    
+  }
+
+  .stats-table th, .stats-table td {
+    padding: 15px;
+    text-align: left;
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    color: #dcd5d5;
+  }
+
+  .stats-table th {
+    background-color: #dcd5d5;
+    color: #ff4d4d;
+    font-size: 18px;
+  }
+
+  .stats-table td {
+    background-color: #222;
+    font-size: 16px;
+  }
+
+  .stats-table td:first-child {
+    font-weight: bold;
+    color: #ff4d4d;
+  }
+
+    .fighter-class {
+      text-align: center;
+      color: #ff4d4d;
+      font-weight: bold;
+      margin-top: 20px;
+      font-size: 20px;
+    }
+
+    .fight-history {
+      margin-top: 40px;
+      background: linear-gradient(135deg, #1c1c1c, #111);
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(255, 0, 0, 0.3);
+    }
+
+    .fight-history-title {
+      text-align: center;
+      color: #ff4d4d;
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .fight-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+      font-size: 18px;
+    }
+
+    .fight-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Footer */
+    footer.footer {
+      background: #111;
+      color: #777;
+      padding: 20px 0;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .social-icons a {
       color: #fff;
+      font-size: 1.5rem;
+      margin: 0 10px;
     }
 
-    .text-danger {
-      color: #ff4d4d !important;
+    .social-icons a:hover {
+      color: #ff4d4d;
+    }
+
+    .footer-links {
+      margin: 15px 0;
+    }
+
+    .footer-link {
+      margin: 0 10px;
+      color: #777;
+      text-decoration: none;
+    }
+
+    .footer-link:hover {
+      color: #ff4d4d;
+    }
+
+    .footer-divider {
+      height: 1px;
+      background: #333;
+      margin: 15px 0;
     }
   </style>
 </head>
+
 <body>
-  <div class="container mt-5">
-    <div class="row align-items-center mb-4">
-      <div class="col-md-4 text-center mb-3 mb-md-0">
-        <img id="fighter-photo" src="" alt="Фото бойца" class="img-fluid shadow">
+
+ 
+  <nav class="navbar navbar-expand-lg px-3">
+    <div class="container-fluid">
+      <a class="navbar-brand me-3" href="index.html">
+        <img src="./photo/logo.png" alt="Логотип">
+      </a>
+
+      <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+        <ul class="navbar-nav">
+     
+          <li class="nav-item px-2"><a class="nav-link" href="news.html">Новости</a></li>
+          <li class="nav-item px-2"><a class="nav-link" href="treners.html">Тренера</a></li>
+          <li class="nav-item px-2"><a class="nav-link" href="tournaments.html">Турниры</a></li>
+        </ul>
       </div>
-      <div class="col-md-8">
-        <h1 id="fighter-name" class="fw-bold mb-3"></h1>
-        <div class="bg-dark p-3 rounded border border-danger">
-          <p id="fighter-info" class="mb-0"></p>
-        </div>
+
+      <div class="d-flex align-items-center">
+        <a href="https://www.youtube.com/" target="_blank" class="text-white mx-2">
+          <i class="bi bi-youtube" style="font-size: 1.5rem;"></i>
+        </a>
+        <a href="https://www.instagram.com/" target="_blank" class="text-white mx-2">
+          <i class="bi bi-instagram" style="font-size: 1.5rem;"></i>
+        </a>
+        <a href="https://wa.me/1234567890" target="_blank" class="text-white mx-2">
+          <i class="bi bi-whatsapp" style="font-size: 1.5rem;"></i>
+        </a>
       </div>
     </div>
+  </nav>
 
-    <div class="card p-4">
-      <h4 class="text-white">Бои:</h4>
-      <ul id="matches-list" class="list-unstyled mt-3"></ul>
+  <!-- Контент -->
+  <div class="container content-wrapper">
+    
+    <div class="fighter-card">
+      <div class="fighter-name" id="fighter-name">Загрузка...</div>
+      <div class="text-center">
+        <img id="fighter-photo" src="" alt="Фото бойца" class="fighter-photo">
+      </div>
+
+      <table class="table stats-table">
+        <tr><td>Возраст</td><td id="fighter-age">Загрузка...</td></tr>
+        <tr><td>Рост</td><td id="fighter-height">Загрузка...</td></tr>
+        <tr><td>Вес</td><td id="fighter-weight">Загрузка...</td></tr>
+        <tr><td>Победы</td><td id="fighter-wins">Загрузка...</td></tr>
+        <tr><td>Поражения</td><td id="fighter-losses">Загрузка...</td></tr>
+      </table>
+
+      <div class="fighter-class" id="fighter-class">Загрузка...</div>
+    </div>
+
+    <div class="fight-history">
+      <div class="fight-history-title">История боев</div>
+      <div id="fight-history">
+        <p>Загрузка истории боев...</p>
+      </div>
     </div>
   </div>
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const fighterId = params.get('id');
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="social-icons">
+        <a href="https://www.youtube.com/" target="_blank"><i class="bi bi-youtube"></i></a>
+        <a href="https://www.instagram.com/" target="_blank"><i class="bi bi-instagram"></i></a>
+        <a href="https://www.facebook.com/" target="_blank"><i class="bi bi-facebook"></i></a>
+      </div>
 
-    fetch(`/api/fighters/${fighterId}/matches`)
-      .then(res => res.json())
-      .then(data => {
-        const { fighter, matches } = data;
+      <div class="footer-links">
+        <a href="#" class="footer-link">О нас</a>
+        <a href="#" class="footer-link">Контакты</a>
+        <a href="#" class="footer-link">Политика конфиденциальности</a>
+        <a href="#" class="footer-link">Условия использования</a>
+      </div>
 
-        document.getElementById('fighter-name').textContent = fighter.name;
-        document.getElementById('fighter-photo').src = fighter.photo_url;
+      <div class="footer-divider"></div>
 
-        document.getElementById('fighter-info').innerHTML = `
-          <strong>Страна:</strong> ${fighter.country}<br>
-          <strong>Возраст:</strong> ${fighter.age}<br>
-          <strong>Категория:</strong> ${fighter.category}<br>
-          <strong>Стиль:</strong> ${fighter.style}<br>
-          <strong>Рост:</strong> ${fighter.height}м<br>
-          <strong>Вес:</strong> ${fighter.weight}кг
-        `;
+      <div>© 2025 Все права защищены</div>
+    </div>
+  </footer>
 
-        const list = document.getElementById('matches-list');
-        matches.forEach(match => {
-          const li = document.createElement('li');
-          li.classList.add('mb-2');
-          li.innerHTML = `
-            <strong>${match.date.slice(0, 10)}</strong> — <em>${match.opponent_name}</em><br>
-            <span class="text-danger">${match.result}</span> (${match.method}) 
-            на <u>${match.event_name}</u>
-          `;
-          list.appendChild(li);
-        });
-      })
-      .catch(err => {
-        console.error('Ошибка:', err);
-        alert('Ошибка при загрузке данных');
-      });
-      
-  </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Функция для получения параметра id из URL
+  function getQueryParam(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);  // Возвращает значение параметра по имени, или null, если не найден
+  }
+
+  // Функция для получения данных о бойце
+  async function getFighterData(fighterId) {
+  const res = await fetch(`/api/fighters/${fighterId}`);
+  if (!res.ok) {
+    console.error('Ошибка при получении данных о бойце');
+    return;
+  }
+  const data = await res.json();
+  const currentYear = new Date().getFullYear();
+const age = currentYear - data.birthYear;
+  // Заполнение данных бойца на странице
+  document.getElementById('fighter-name').textContent = data.name;
+  document.getElementById('fighter-age').textContent = age;
+  document.getElementById('fighter-height').textContent = data.height;
+  document.getElementById('fighter-weight').textContent = data.weight;
+  document.getElementById('fighter-wins').textContent = data.wins;
+  document.getElementById('fighter-losses').textContent = data.losses;
+  document.getElementById('fighter-class').textContent = data.class;
+
+  // Заполнение фото бойца
+  document.getElementById('fighter-class').textContent = data.class;
+
+if (data.photo_url) {
+  document.getElementById('fighter-photo').src = data.photo_url;
+} else {
+  document.getElementById('fighter-photo').src = 'public/photo/r.png'; // Путь к фото по умолчанию
+}
+  
+    // Заполнение истории боев
+  const fightHistoryContainer = document.getElementById('fight-history');
+  fightHistoryContainer.innerHTML = ''; // Очищаем перед добавлением новых данных
+  if (data.fightHistory && data.fightHistory.length > 0) {
+    data.fightHistory.forEach(fight => {
+      const div = document.createElement('div');
+      div.className = 'fight-item';
+      div.innerHTML = `
+        <span>${fight.opponentName}</span>
+        <span>${fight.result}</span>
+      `;
+      fightHistoryContainer.appendChild(div);
+    });
+  } else {
+    fightHistoryContainer.innerHTML = '<p>История боев отсутствует.</p>';
+  }
+}
+
+// При загрузке страницы получаем id бойца и подгружаем данные
+const fighterId = getQueryParam('id');
+if (fighterId) {
+  getFighterData(fighterId);
+} else {
+  console.error('ID бойца не указан в URL');
+}
+
+</script>
 </body>
 </html>

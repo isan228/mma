@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Генерация турнирной сетки</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #212121;
+      color: white;
+    }
+    .container {    
+      max-width: 800px;
+      margin-top: 50px;
+    }
+    .btn-custom {
+      background-color: #e60000;
+      color: white;
+    }
+    .btn-custom:hover {
+      background-color: #b30000;
+    }
+   
+  .bracket {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+  }
+  .match {
+    background: #333;
+    padding: 15px 30px;
+    margin: 10px 0;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+  }
+  .fighter {
+    padding: 5px 0;
+    border-bottom: 1px solid #555;
+  }
+  .fighter:last-child {
+    border-bottom: none;
+  }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2 class="text-center mb-4">Генерация турнирной сетки</h2>
+
+  <!-- Шаг 1: Выбор турнира -->
+  <div class="mb-4">
+    <label for="tournamentSelect" class="form-label">Выберите турнир</label>
+    <select class="form-select" id="tournamentSelect">
+      <option value="" selected disabled>Выберите турнир</option>
+      <!-- Турниры будут подгружаться через API -->
+    </select>
+  </div>
+
+  <!-- Шаг 2: Выбор участников -->
+  <div class="mb-4" id="fightersDiv" style="display: none;">
+    <h5>Выберите участников</h5>
+    <div id="fightersList">
+      <!-- Список бойцов будет отображаться здесь -->
+    </div>
+  </div>
+
+  <!-- Кнопка для генерации турнирной сетки -->
+  <div class="text-center">
+    <button class="btn btn-custom" id="generateBtn" style="display: none;">Генерировать сетку</button>
+  </div>
+</div>
+<div id="bracketContainer" class="mt-5" style="display: none;">
+  <h4 class="text-center mb-4">Турнирная сетка</h4>
+  <div id="bracket" class="row g-3 justify-content-center">
+    <!-- Матчи будут добавляться сюда -->
+  </div>
+</div>
+
+<script>
+  // Загружаем турниры
+  async function loadTournaments() {
+    const response = await fetch('/api/tournaments');
+    const tournaments = await response.json();
+
+    const tournamentSelect = document.getElementById('tournamentSelect');
+    tournaments.forEach(tournament => {
+      const option = document.createElement('option');
+      option.value = tournament.id;
+      option.textContent = tournament.name;
+      tournamentSelect.appendChild(option);
+    });
+  }
+
+  // Загружаем участников для выбранного турнира
+  async function loadFighters(tournamentId) {
+    const response = await fetch(`/api/tournaments/${tournamentId}/fighters`);
+    const fighters = await response.json();
+    console.log(fighters);
+    const fightersList = document.getElementById('fightersList');
+    fightersList.innerHTML = ''; // очищаем список
+    fighters.forEach(fighter => {
+      const div = document.createElement('div');
+      div.classList.add('form-check');
+      div.innerHTML = `  
+        <input class="form-check-input" type="checkbox" value="${fighter.id}" id="fighter${fighter.id}">
+        <label class="form-check-label" for="fighter${fighter.id}">
+          ${fighter.name} (${fighter.team})
+        </label>
+      `;
+      fightersList.appendChild(div);
+    });
+
+    document.getElementById('fightersDiv').style.display = 'block';
+    document.getElementById('generateBtn').style.display = 'inline-block';
+  }
+
+  // Генерация турнирной сетки
+  async function generateTournamentMatches() {
+  const tournamentId = document.getElementById('tournamentSelect').value;
+  const selectedFighters = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(input => input.value);
+
+  if (selectedFighters.length < 2) {
+    alert('Для генерации сетки нужно хотя бы два бойца.');
+    return;
+  }
+
+  const response = await fetch(`/api/tournaments/${tournamentId}/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tournamentId, fighters: selectedFighters })
+  });
+
+  const data = await response.json();
+
+  if (data.message) {
+    alert(data.message);
+  }
+
+  if (data.matches) {
+    displayBracket(data.matches);
+  }
+}
+  function renderBracket(matches) {
+  const bracketDiv = document.getElementById('bracket');
+  bracketDiv.innerHTML = ''; // Очистить предыдущую сетку
+
+  matches.forEach((match, index) => {
+    const matchDiv = document.createElement('div');
+    matchDiv.classList.add('match');
+    matchDiv.innerHTML = `
+      <div class="fighter">${match.fighter1 ? match.fighter1.name : '???'}</div>
+      <div class="fighter">${match.fighter2 ? match.fighter2.name : '???'}</div>
+    `;
+    bracketDiv.appendChild(matchDiv);
+  });
+}
+
+function displayBracket(matches) {
+  const bracket = document.getElementById('bracket');
+  bracket.innerHTML = ''; // Очищаем
+
+  matches.forEach((match, index) => {
+    const card = document.createElement('div');
+    card.className = 'col-10 col-md-6';
+
+    card.innerHTML = `
+      <div class="card bg-dark text-white shadow">
+        <div class="card-body">
+          <h5 class="card-title text-center">Бой ${index + 1}</h5>
+         <p class="card-text text-center">
+  ${match.fighter1?.name || '???'} (${match.fighter2?.team?.name || '???'})
+</p>
+          <p class="card-text text-center">VS</p>
+          <p class="card-text text-center">
+  ${match.fighter2?.name || '???'} (${match.fighter2?.team?.name || '???'})
+</p>
+        </div>
+      </div>
+    `;
+
+    bracket.appendChild(card);
+  });
+
+  document.getElementById('bracketContainer').style.display = 'block';
+}
+ 
+  // Обработчики событий
+  document.getElementById('tournamentSelect').addEventListener('change', (e) => {
+    loadFighters(e.target.value);
+  });
+
+  document.getElementById('generateBtn').addEventListener('click', generateTournamentMatches);
+
+  // Инициализация
+  loadTournaments();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

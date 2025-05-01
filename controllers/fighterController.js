@@ -1,4 +1,6 @@
 const { Fighter, Match } = require('../models');
+const path = require('path');
+const fs = require('fs');
 
 const fighterController = {
   getAllFighters: async (req, res) => {
@@ -13,8 +15,45 @@ const fighterController = {
 
   createFighter: async (req, res) => {
     try {
-      const { name, age, country, height, weight, category, style, photo_url } = req.body;
-      const newFighter = await Fighter.create({ name, age, country, height, weight, category, style, photo_url });
+      const {
+        name,
+        birthYear, // Вместо age
+        gender,    // Новый пол
+        country,
+        height,
+        weight,
+        category,
+        style,
+        wins = 0,
+        losses = 0,
+        team,
+        trainer,
+        isPaid = false
+      } = req.body;
+
+      // Проверка файла
+      let photo_url = null;
+      if (req.file) {
+        photo_url = `/uploads/${req.file.filename}`;
+      }
+
+      const newFighter = await Fighter.create({
+        name,
+        birthYear,
+        gender,
+        country,
+        height,
+        weight,
+        category,
+        style,
+        photo_url,
+        wins,
+        losses,
+        teamId: team,
+        trainerId: trainer,
+        isPaid: isPaid === true || isPaid === 'true'
+      });
+
       res.status(201).json(newFighter);
     } catch (err) {
       console.error(err);
@@ -37,11 +76,43 @@ const fighterController = {
 
   updateFighter: async (req, res) => {
     try {
-      const { name, age, country, height, weight, category, style, photo_url } = req.body;
-      const [updated] = await Fighter.update(
-        { name, age, country, height, weight, category, style, photo_url },
-        { where: { id: req.params.id } }
-      );
+      const {
+        name,
+        birthYear, // Вместо age
+        gender,    // Новый пол
+        country,
+        height,
+        weight,
+        category,
+        style,
+        wins,
+        losses,
+        team,
+        trainer,
+        isPaid
+      } = req.body;
+
+      let updateData = {
+        name,
+        birthYear,
+        gender,
+        country,
+        height,
+        weight,
+        category,
+        style,
+        wins,
+        losses,
+        teamId: team,
+        trainerId: trainer,
+        isPaid: isPaid === true || isPaid === 'true'
+      };
+
+      if (req.file) {
+        updateData.photo_url = `/uploads/${req.file.filename}`;
+      }
+
+      const [updated] = await Fighter.update(updateData, { where: { id: req.params.id } });
 
       if (!updated) {
         return res.status(404).json({ error: 'Боец не найден для обновления' });

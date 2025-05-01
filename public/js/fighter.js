@@ -1,180 +1,173 @@
-// Функция для загрузки списка бойцов
+let editId = null;
+
+// Загрузка бойцов
 async function loadFighters() {
-    try {
-      const response = await fetch('/api/fighters');
-      const fighters = await response.json();
-      const list = document.getElementById('fighters-list');
-      list.innerHTML = ''; // Очищаем список
-  
-      fighters.forEach(fighter => {
-        const li = document.createElement('li');
-        li.className = 'list-group-item d-flex justify-content-between align-items-center';
-        li.innerHTML = `
-            ${fighter.name} (${fighter.category}) - ${fighter.team} - Рекорд: ${fighter.record}
-            <div>
-                <button class="btn btn-sm btn-warning me-2" onclick="editFighter(${fighter.id})">Редактировать</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteFighter(${fighter.id})">Удалить</button>
-            </div>
-        `;
-        list.appendChild(li);
+  try {
+    const response = await fetch('/api/fighters');
+    const fighters = await response.json();
+    const list = document.getElementById('fighters-list');
+    list.innerHTML = '';
+
+    fighters.forEach(fighter => {
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex justify-content-between align-items-center';
+      li.id = `fighter-${fighter.id}`;
+      const record = `${fighter.wins || 0}-${fighter.losses || 0}`;
+      const paymentStatus = fighter.isPaid ? '✅ Оплачено' : '❌ Не оплачено';
+      li.innerHTML = `
+        <span class="fighter-name">
+          ${fighter.name} (${fighter.category}) - Рекорд: ${record} - ${paymentStatus}
+          <br>Год рождения: ${fighter.birthYear || 'Не указан'}, Пол: ${fighter.gender || 'Не указан'}
+        </span>
+        <div>
+          <button class="btn btn-sm btn-warning me-2" onclick="editFighter(${fighter.id})">Редактировать</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteFighter(${fighter.id})">Удалить</button>
+        </div>
+      `;
+      list.appendChild(li);
     });
-    } catch (err) {
-      console.error(err);
-    }
+  } catch (err) {
+    console.error(err);
   }
-  
-// Функция для добавления нового бойца
+}
+
+// Отправка формы (добавление/обновление)
 document.getElementById('fighter-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // Собираем данные формы
-    const form = e.target;
-    const data = new FormData(form);
-    const formData = {};
+  const form = e.target;
+  const formData = new FormData(form);
 
-    data.forEach((value, key) => {
-      formData[key] = value;
-    });
+  // Явно добавляем галочку оплаты
+  formData.set('isPaid', form.elements.paid.checked ? 'true' : 'false');
 
-    try {
+  // Если нет выбранного файла, старое фото_url оставляем как есть (если редактирование)
+  if (!formData.get('photo')) {
+    formData.delete('photo');
+  }
+
+  // Новые поля birthYear и gender
+  formData.set('birthYear', form.elements.birthYear.value);
+  formData.set('gender', form.elements.gender.value);
+
+  try {
+    if (editId) {
+      const response = await fetch(`/api/fighters/${editId}`, {
+        method: 'PUT',
+        body: formData,
+      });
+
+      if (response.ok) {
+        alert('Боец обновлён');
+        form.reset();
+        editId = null;
+        document.querySelector('button[type="submit"]').innerText = 'Добавить бойца';
+        loadFighters();
+      } else {
+        alert('Ошибка при обновлении бойца');
+      }
+    } else {
       const response = await fetch('/api/fighters', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: formData,
       });
 
       if (response.ok) {
         alert('Боец добавлен успешно');
-        form.reset();  // Очищаем форму
-        loadFighters(); // Подгружаем список бойцов
+        form.reset();
+        loadFighters();
       } else {
         alert('Ошибка при добавлении бойца');
       }
-    } catch (err) {
-      console.error(err);
-      alert('Ошибка при добавлении бойца');
     }
-  });
-  
-  // Функция для загрузки списка бойцов
-async function loadFighters() {
-    try {
-      const response = await fetch('/api/fighters');
-      const fighters = await response.json();
-      const list = document.getElementById('fighters-list');
-      list.innerHTML = ''; // Очищаем список
-  
-      fighters.forEach(fighter => {
-        const li = document.createElement('li');
-        li.className = 'list-group-item d-flex justify-content-between align-items-center';
-        li.id = `fighter-${fighter.id}`;  // Уникальный id для каждого бойца
-        li.innerHTML = `
-          <span class="fighter-name">${fighter.name} (${fighter.category})</span>
-          <div>
-            <button class="btn btn-sm btn-warning me-2" onclick="editFighter(${fighter.id})">Редактировать</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteFighter(${fighter.id})">Удалить</button>
-          </div>
-        `;
-        list.appendChild(li);
-      });
-    } catch (err) {
-      console.error(err);
-    }
+  } catch (err) {
+    console.error(err);
+    alert('Ошибка при сохранении бойца');
   }
-  // Функция для удаления бойца
-  async function deleteFighter(id) {
-    if (!confirm('Ты уверен, брат?')) return;
-  
-    try {
-      const response = await fetch(`/api/fighters/${id}`, {
-        method: 'DELETE',
-      });
-  
-      if (response.ok) {
-        alert('Боец удалён');
-        loadFighters();
-      } else {
-        alert('Ошибка при удалении');
-      }
-    } catch (err) {
-      console.error(err);
+});
+
+// Удаление бойца
+async function deleteFighter(id) {
+  if (!confirm('Ты уверен, брат?')) return;
+
+  try {
+    const response = await fetch(`/api/fighters/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      alert('Боец удалён');
+      loadFighters();
+    } else {
       alert('Ошибка при удалении');
     }
+  } catch (err) {
+    console.error(err);
+    alert('Ошибка при удалении');
   }
-  
-  // Функция для редактирования бойца
-  async function editFighter(id) {
-    try {
-      const response = await fetch(`/api/fighters/${id}`);
-      const fighter = await response.json();
-  
-      // Заполняем форму данными бойца
-      document.getElementById('name').value = fighter.name;
-      document.getElementById('age').value = fighter.age;
-      document.getElementById('country').value = fighter.country;
-      document.getElementById('height').value = fighter.height;
-      document.getElementById('weight').value = fighter.weight;
-      document.getElementById('category').value = fighter.category;
-      document.getElementById('style').value = fighter.style;
-      document.getElementById('photo_url').value = fighter.photo_url;
-  
-      // Меняем кнопку на "Обновить"
-      const submitButton = document.querySelector('button[type="submit"]');
-      submitButton.innerText = 'Обновить бойца';
-      submitButton.setAttribute('onclick', `updateFighter(${id})`);
-    } catch (err) {
-      console.error(err);
-      alert('Ошибка при редактировании');
-    }
+}
+
+// Редактирование бойца
+async function editFighter(id) {
+  try {
+    const response = await fetch(`/api/fighters/${id}`);
+    const fighter = await response.json();
+
+    document.getElementById('name').value = fighter.name;
+    document.getElementById('birthYear').value = fighter.birthYear || '';  // Новое поле
+    document.getElementById('gender').value = fighter.gender || '';        // Новое поле
+ 
+    document.getElementById('country').value = fighter.country;
+    document.getElementById('height').value = fighter.height;
+    document.getElementById('weight').value = fighter.weight;
+    document.getElementById('category').value = fighter.category;
+    document.getElementById('style').value = fighter.style;
+    document.getElementById('team').value = fighter.team_id;
+    document.getElementById('trainer').value = fighter.trainer_id;
+    document.getElementById('wins').value = fighter.wins || 0;
+    document.getElementById('losses').value = fighter.losses || 0;
+    document.getElementById('paid').checked = fighter.isPaid;
+
+    editId = id;
+    document.querySelector('button[type="submit"]').innerText = 'Обновить бойца';
+  } catch (err) {
+    console.error(err);
+    alert('Ошибка при редактировании');
   }
-  
-// Функция для обновления данных бойца
-async function updateFighter(id) {
-    const form = document.getElementById('fighter-form');
-    const formData = new FormData(form);
-    const data = {};
-  
-    formData.forEach((value, key) => {
-      data[key] = value;
+}
+
+// Загрузка команд и тренеров
+async function loadTeamsAndTrainers() {
+  try {
+    const teamResponse = await fetch('/api/teams');
+    const teams = await teamResponse.json();
+    const teamSelect = document.getElementById('team');
+    teamSelect.innerHTML = '<option value="">Выберите команду</option>';
+    teams.forEach(team => {
+      const option = document.createElement('option');
+      option.value = team.id;
+      option.textContent = team.name;
+      teamSelect.appendChild(option);
     });
-  
-    try {
-      const response = await fetch(`/api/fighters/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-  
-      if (response.ok) {
-        alert('Боец обновлён');
-        form.reset(); // Очищаем форму
-  
-        // Обновляем данные бойца в списке
-        const updatedFighter = await response.json();
-        const listItem = document.querySelector(`#fighter-${id}`);
-  
-        if (listItem) {
-          // Обновляем только текущего бойца в списке
-          listItem.querySelector('.fighter-name').textContent = `${updatedFighter.name} (${updatedFighter.category})`;
-        } else {
-          console.error("Не найден элемент для обновления.");
-        }
-  
-        // Возвращаем кнопку в режим "Добавить"
-        const submitButton = document.querySelector('button[type="submit"]');
-        submitButton.innerText = 'Добавить бойца';
-        submitButton.removeAttribute('onclick');
-      } else {
-        alert('Ошибка при обновлении бойца');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Ошибка при обновлении бойца');
-    }
-    console.log('update fighter')
+
+    const trainerResponse = await fetch('/api/trainer');
+    const trainers = await trainerResponse.json();
+    const trainerSelect = document.getElementById('trainer');
+    trainerSelect.innerHTML = '<option value="">Выберите тренера</option>';
+    trainers.forEach(trainer => {
+      const option = document.createElement('option');
+      option.value = trainer.id;
+      option.textContent = trainer.name;
+      trainerSelect.appendChild(option);
+    });
+  } catch (err) {
+    console.error(err);
+    alert('Ошибка при загрузке тренеров и команд');
   }
-  
-  // Загружаем бойцов при старте страницы
-  document.addEventListener('DOMContentLoaded', () => {
-    loadFighters();
-  });
+}
+
+// При загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+  loadFighters();
+  loadTeamsAndTrainers();
+});

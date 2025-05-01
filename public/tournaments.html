@@ -3,43 +3,197 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Предстоящие турниры</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Турниры</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    /* Стиль для страницы */
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at center, #1a1a1a, #0d0d0d);
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .content-wrapper {
+      flex: 1 0 auto;
+    }
+    .footer {
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #2a0a0a, #1a0505);
+      border-top: 2px solid #ff1a1a;
+      padding: 30px 0 20px;
+      box-shadow: 0 -5px 15px rgba(255, 0, 0, 0.1);
+    }
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 20px;
+    }
+    .social-icon {
+      color: #fff;
+      font-size: 2rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.1);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 0, 0, 0.3);
+    }
+    .social-icon:hover {
+      color: #ff1a1a;
+      background: rgba(255, 26, 26, 0.2);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+      text-decoration: none;
+    }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .footer-link {
+      color: #ccc;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-link:hover {
+      color: #ff4d4d;
+    }
+    .copyright {
+      text-align: center;
+      color: #999;
+      font-size: 0.9rem;
+      margin-top: 15px;
+    }
+    .footer-divider {
+      width: 80%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(255, 0, 0, 0.5), transparent);
+      margin: 15px auto;
+    }
+    .card {
+      background-color: #1a1a1a;
+      color: #fff;
+      margin-bottom: 1rem;
+      border: 1px solid red;
+    }
+    .navbar {
+      background-color: #1a1a1a;
+      border-bottom: 1px solid rgba(255, 0, 0, 0.4);
+    }
+    .navbar-brand img {
+      height: 80px;
+    }
+    .nav-link {
+      color: #fff !important;
+    }
+    .nav-link:hover {
+      color: #ff1a1a !important;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Предстоящие турниры</h1>
-  </header>
 
-  <section id="tournaments">
-    <ul id="tournamentList"></ul>
-  </section>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg px-3">
+  <div class="container-fluid">
+    <a class="navbar-brand me-3" href="index.html">
+      <img src="./photo/logo.png" alt="Логотип">
+    </a>
+    <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <ul class="navbar-nav">
+       
+        <li class="nav-item px-2"><a class="nav-link" href="news.html">Новости</a></li>
+        <li class="nav-item px-2"><a class="nav-link" href="treners.html">Тренера</a></li>
+        <li class="nav-item px-2"><a class="nav-link" href="tournaments.html">Турниры</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
-  <script>
-    // Получаем список турниров с сервера
-    fetch('/api/tournaments')
-      .then(response => response.json())
-      .then(data => {
-        const tournamentList = document.getElementById('tournamentList');
-        
-        // Если турниры есть
-        if (data.length) {
-          data.forEach(tournament => {
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `
-              <h3>${tournament.name}</h3>
-              <p>${tournament.date}</p>
-              <p>${tournament.location}</p>
-            `;
-            tournamentList.appendChild(listItem);
-          });
-        } else {
-          tournamentList.innerHTML = '<li>Нет предстоящих турниров.</li>';
-        }
-      })
-      .catch(error => {
-        console.error('Ошибка при загрузке турниров:', error);
+<!-- Main Content -->
+<div class="content-wrapper">
+  <div class="container mt-5">
+    <h1 class="mb-4">Предстоящие турниры</h1>
+    <div id="tournaments">
+      <!-- Здесь будут отображаться турнирные карточки -->
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="social-icons">
+        <a href="https://www.youtube.com/" target="_blank" class="social-icon"><i class="bi bi-youtube"></i></a>
+        <a href="https://www.instagram.com/" target="_blank" class="social-icon"><i class="bi bi-instagram"></i></a>
+        <a href="https://www.facebook.com/" target="_blank" class="social-icon"><i class="bi bi-facebook"></i></a>
+        <a href="https://wa.me/1234567890" target="_blank" class="social-icon"><i class="bi bi-whatsapp"></i></a>
+        <a href="https://t.me/" target="_blank" class="social-icon"><i class="bi bi-telegram"></i></a>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-links">
+        <a href="#" class="footer-link">О нас</a>
+        <a href="#" class="footer-link">Контакты</a>
+        <a href="#" class="footer-link">Политика конфиденциальности</a>
+        <a href="#" class="footer-link">Условия использования</a>
+      </div>
+
+      <div class="copyright">
+        © 2023 MMA Fighters Database. Все права защищены.
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const tournamentsContainer = document.getElementById('tournaments');
+
+    try {
+      // Получаем турниры с сервера
+      const res = await fetch('/api/tournaments');
+      if (!res.ok) throw new Error('Не удалось загрузить турниры');
+
+      const tournaments = await res.json();
+      tournaments.forEach(tournament => {
+        const tournamentCard = document.createElement('div');
+        tournamentCard.classList.add('card', 'p-3');
+
+        tournamentCard.innerHTML = `
+          <h3>${tournament.name}</h3>
+          <p><strong>Дата:</strong> ${new Date(tournament.date).toLocaleDateString()}</p>
+          <p><strong>Место:</strong> ${tournament.location}</p>
+          <p>${tournament.description}</p>
+        `;
+        tournamentsContainer.appendChild(tournamentCard);
       });
-  </script>
+    } catch (err) {
+      tournamentsContainer.innerHTML = '<p class="text-danger">Ошибка загрузки турниров. Попробуйте позже.</p>';
+      console.error(err);
+    }
+  });
+</script>
 </body>
 </html>

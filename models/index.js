@@ -21,17 +21,28 @@ fs
   .readdirSync(__dirname)
   .filter(file => {
     return (
-      file.indexOf('.') !== 0 &&
-      file !== basename &&
-      file.slice(-3) === '.js' &&
-      file.indexOf('.test.js') === -1
+      file.indexOf('.') !== 0 &&          // не скрытый файл
+      file !== basename &&               // не index.js
+      file.slice(-3) === '.js' &&        // только .js файлы
+      !file.endsWith('.test.js')         // пропускаем тесты
     );
   })
   .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    const modelPath = path.join(__dirname, file);
+    console.log(`📄 Загружается модель: ${file}`);
+
+    const modelModule = require(modelPath);
+    
+    if (typeof modelModule !== 'function') {
+      console.error(`❌ Файл ${file} не экспортирует функцию. Он будет пропущен.`);
+      return;
+    }
+
+    const model = modelModule(sequelize, Sequelize.DataTypes);
     db[model.name] = model;
   });
 
+// Настройка связей между моделями (если есть)
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);

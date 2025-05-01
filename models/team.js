@@ -1,20 +1,25 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Team extends Model {
-    static associate(models) {
-      // Связь с бойцом
-      Team.hasMany(models.Fighter, { foreignKey: 'teamId' });
-    }
-  }
-  Team.init({
-    name: DataTypes.STRING,
-    description: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Team',
+  const Team = sequelize.define('Team', {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    logo: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   });
+
+  Team.associate = (models) => {
+    Team.hasMany(models.Fighter, { foreignKey: 'teamId', as: 'fighters' }); // Используем teamId
+  };
+
+
   return Team;
 };

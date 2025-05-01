@@ -8,14 +8,14 @@
   },
   "test": {
     "username": "postgres",
-    "password": "Enigma10",
+    "password": "634512",
     "database": "mma_db_test",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "production": {
     "username": "postgres",
-    "password": "Enigma10",
+    "password": "634512",
     "database": "mma_db_prod",
     "host": "127.0.0.1",
     "dialect": "postgres"

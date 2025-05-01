@@ -1,40 +1,48 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Fighter extends Model {
     static associate(models) {
-      // Связь с командой (одна команда может иметь много бойцов)
-      Fighter.belongsTo(models.Team, { foreignKey: 'teamId' });
-      // Связь с матчами (один боец может участвовать в нескольких матчах)
-      Fighter.hasMany(models.Match, { foreignKey: 'fighterId' });
+      Fighter.belongsTo(models.Team, { foreignKey: 'teamId', as: 'team' });
+      Fighter.hasMany(models.Match, { foreignKey: 'fighterId', as: 'MatchesAsFighter' });
+      Fighter.hasMany(models.Match, { foreignKey: 'opponentId', as: 'MatchesAsOpponent' });
+    }
+
+    // Виртуальное поле для возраста
+    getAge() {
+      const currentYear = new Date().getFullYear();
+      return this.birthYear ? currentYear - this.birthYear : null;
     }
   }
 
   Fighter.init({
     name: DataTypes.STRING,
-    age: DataTypes.INTEGER,
+    gender: DataTypes.STRING, // добавлено поле "Пол"
+    birthYear: DataTypes.INTEGER, // год рождения вместо возраста
     country: DataTypes.STRING,
     height: DataTypes.FLOAT,
     weight: DataTypes.FLOAT,
     category: DataTypes.STRING,
     style: DataTypes.STRING,
     photo_url: DataTypes.STRING,
-    teamId: DataTypes.INTEGER, // Связь с командой
-    trainerId: DataTypes.INTEGER,  // Добавляем поле для тренера
+    teamId: DataTypes.INTEGER,
+    trainerId: DataTypes.INTEGER,
     wins: {
       type: DataTypes.INTEGER,
-      defaultValue: 0, // По умолчанию 0 побед
+      defaultValue: 0,
     },
     losses: {
       type: DataTypes.INTEGER,
-      defaultValue: 0, // По умолчанию 0 поражений
+      defaultValue: 0,
     },
     record: {
       type: DataTypes.STRING,
-      allowNull: true, // Будет хранить текстовый проф. рекорд
+      allowNull: true,
+    },
+    isPaid: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     }
   }, {
     sequelize,
