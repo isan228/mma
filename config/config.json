@@ -1,23 +1,26 @@
 {
   "development": {
-    "username": "postgres",
-    "password": "Enigma10",         
-    "database": "mma",       
-    "host": "127.0.0.1",
-    "dialect": "postgres"
+    "username": "anton",
+    "password": "1964",
+    "database": "mma",
+    "host": "192.168.1.50",
+    "dialect": "postgres",
+    "port": 7654
   },
   "test": {
-    "username": "postgres",
-    "password": "634512",
-    "database": "mma_db_test",
-    "host": "127.0.0.1",
-    "dialect": "postgres"
+    "username": "anton",
+    "password": "1964",
+    "database": "mma",
+    "host": "192.168.1.50",
+    "dialect": "postgres",
+    "port": 7654
   },
   "production": {
-    "username": "postgres",
-    "password": "634512",
-    "database": "mma_db_prod",
-    "host": "127.0.0.1",
-    "dialect": "postgres"
+    "username": "anton",
+    "password": "1964",
+    "database": "mma",
+    "host": "192.168.1.50",
+    "dialect": "postgres",
+    "port": 7654
   }
 }
