@@ -24,7 +24,7 @@ db.sequelize.sync({ force: true }) // force: false, чтобы не удалят
   .catch(err => {
     console.error('Ошибка при синхронизации базы данных:', err);
   });
-
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -42,7 +42,7 @@ app.use('/api/search', searchRoutes);
 app.use('/news', newsRoutes);
 app.use('/api/users', userRoutes); // Роуты для регистрации и логина
 
-app.use(cors());
+
 // Главная страница
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
