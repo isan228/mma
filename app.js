@@ -16,7 +16,7 @@ const port = 3000;
 dotenv.config();
 
 // Синхронизация базы данных
-db.sequelize.sync({ force: false }) // force: false, чтобы не удалять таблицы каждый раз
+db.sequelize.sync({ force: true }) // force: false, чтобы не удалять таблицы каждый раз
   .then(() => {
     console.log("База данных синхронизирована!");
   })
