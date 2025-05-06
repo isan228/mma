@@ -19,9 +19,11 @@ const port = 3000;
 
 app.use(cors({
   origin: 'https://mma-3mwk.onrender.com',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
-}));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true,
+  optionsSuccessStatus: 204
+}) );
 // Синхронизация базы данных
 db.sequelize.sync({ force: true }) // force: false, чтобы не удалять таблицы каждый раз
   .then(() => {
