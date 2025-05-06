@@ -1,6 +1,10 @@
 const cors = require('cors');
 const express = require('express');
-
+app.use(cors({
+  origin: 'https://mma-3mwk.onrender.com',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 const path = require('path');
 const fighterRoutes = require('./routes/fighterRoutes');
 const matchRoutes = require('./routes/matchRoutes');
@@ -26,7 +30,7 @@ db.sequelize.sync({ force: true }) // force: false, чтобы не удалят
   .catch(err => {
     console.error('Ошибка при синхронизации базы данных:', err);
   });
-app.use(cors());
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
