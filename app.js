@@ -18,7 +18,7 @@ const app = express();
 const port = 3000;
 
 app.use(cors({
-  origin: 'https://mma-3mwk.onrender.com',
+  origin: '*', // Для тестов, потом можно ограничить
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
