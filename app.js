@@ -11,6 +11,7 @@ const userRoutes = require('./routes/userRoutes');  // Роуты для рег�
 const { verifyToken } = require('./middleware/auth');
 const newsRoutes = require('./routes/newsRoutes');
 const dotenv = require('dotenv');
+const cors = require('cors');
 const app = express();
 const port = 3000;
 dotenv.config();
@@ -41,7 +42,7 @@ app.use('/api/search', searchRoutes);
 app.use('/news', newsRoutes);
 app.use('/api/users', userRoutes); // Роуты для регистрации и логина
 
-
+app.use(cors());
 // Главная страница
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
