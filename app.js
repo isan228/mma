@@ -13,10 +13,10 @@ const userRoutes = require('./routes/userRoutes');  // Роуты для рег�
 const { verifyToken } = require('./middleware/auth');
 const newsRoutes = require('./routes/newsRoutes');
 const dotenv = require('dotenv');
-
+dotenv.config();
 const app = express();
 const port = 3000;
-dotenv.config();
+
 app.use(cors({
   origin: 'https://mma-3mwk.onrender.com',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
