@@ -1,4 +1,6 @@
+const cors = require('cors');
 const express = require('express');
+
 const path = require('path');
 const fighterRoutes = require('./routes/fighterRoutes');
 const matchRoutes = require('./routes/matchRoutes');
@@ -11,7 +13,7 @@ const userRoutes = require('./routes/userRoutes');  // Роуты для рег�
 const { verifyToken } = require('./middleware/auth');
 const newsRoutes = require('./routes/newsRoutes');
 const dotenv = require('dotenv');
-const cors = require('cors');
+
 const app = express();
 const port = 3000;
 dotenv.config();
