@@ -1,10 +1,6 @@
 const cors = require('cors');
 const express = require('express');
-app.use(cors({
-  origin: 'https://mma-3mwk.onrender.com',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
-}));
+
 const path = require('path');
 const fighterRoutes = require('./routes/fighterRoutes');
 const matchRoutes = require('./routes/matchRoutes');
@@ -21,7 +17,11 @@ const dotenv = require('dotenv');
 const app = express();
 const port = 3000;
 dotenv.config();
-
+app.use(cors({
+  origin: 'https://mma-3mwk.onrender.com',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 // Синхронизация базы данных
 db.sequelize.sync({ force: true }) // force: false, чтобы не удалять таблицы каждый раз
   .then(() => {
