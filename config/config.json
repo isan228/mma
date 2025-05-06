@@ -8,19 +8,19 @@
   "port": 5432
 },
   "test": {
-    "username": "anton",
-    "password": "1964",
-    "database": "mma",
-    "host": "192.168.1.50",
-    "dialect": "postgres",
-    "port": 7654
+   "username": "mma_bnf9_user",
+  "password": "ngkMpjrJE9vLbgQOoorFNQ9yU5b0tWgI",
+  "database": "mma_bnf9",
+  "host": "dpg-d0cth09r0fns73c9kk8g-a",
+  "dialect": "postgres",
+  "port": 5432
   },
   "production": {
-    "username": "anton",
-    "password": "1964",
-    "database": "mma",
-    "host": "192.168.1.50",
-    "dialect": "postgres",
-    "port": 7654
+  "username": "mma_bnf9_user",
+  "password": "ngkMpjrJE9vLbgQOoorFNQ9yU5b0tWgI",
+  "database": "mma_bnf9",
+  "host": "dpg-d0cth09r0fns73c9kk8g-a",
+  "dialect": "postgres",
+  "port": 5432
   }
 }
