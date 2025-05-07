@@ -49,39 +49,38 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadTeams() {
     const res = await fetch('/api/teams');
     const teams = await res.json();
-
+  
     teamList.innerHTML = '';
     teams.forEach(team => {
       const li = document.createElement('li');
       li.className = 'list-group-item';
       li.textContent = `${team.name} — ${team.description}`;
-
+  
       // Эмблема команды
       if (team.logo) {
         const img = document.createElement('img');
-        img.src = `/uploads/${team.logo}`; // Указываем правильный путь к эмблеме
+        img.src = team.logo; // Используем URL из Cloudinary
         img.alt = 'Логотип';
         img.style.width = '50px'; // Можешь добавить стили для эмблемы
         li.appendChild(img);
       }
-
+  
       // Кнопки для редактирования и удаления
       const editButton = document.createElement('button');
       editButton.textContent = 'Редактировать';
       editButton.className = 'btn btn-warning btn-sm';
       editButton.addEventListener('click', () => editTeam(team.id)); // Редактирование команды
-
+  
       const deleteButton = document.createElement('button');
       deleteButton.textContent = 'Удалить';
       deleteButton.className = 'btn btn-danger btn-sm';
       deleteButton.addEventListener('click', () => deleteTeam(team.id)); // Удаление команды
-
+  
       li.appendChild(editButton);
       li.appendChild(deleteButton);
       teamList.appendChild(li);
     });
   }
-
   // Редактирование команды
   async function editTeam(id) {
     const team = await fetch(`/api/teams/${id}`).then(res => res.json()); // Получаем команду по ID

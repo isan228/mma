@@ -1,25 +1,24 @@
 const multer = require('multer');
-const path = require('path');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Сохраняем в папку uploads
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname)); // Уникальное имя
-  }
+// Конфигурируем Cloudinary
+cloudinary.config({
+  cloud_name: 'dpdbblizf', // Замените на ваш cloud_name
+  api_key: '551671769166255', // Замените на ваш api_key
+  api_secret: 'BN4WB-2pGqjHXH4DceAPQOukKUM' // Замените на ваш api_secret
 });
 
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-  if (allowedTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error('Недопустимый формат файла'), false);
-  }
-};
+// Настройка хранилища для Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'uploads', // Папка в Cloudinary для хранения изображений
+    allowedFormats: ['jpg', 'jpeg', 'png', 'webp'], // Разрешенные форматы
+  },
+});
 
-const upload = multer({ storage, fileFilter });
+// Создаем multer с использованием настроек Cloudinary
+const upload = multer({ storage });
 
 module.exports = upload;
