@@ -1,7 +1,7 @@
 const { Fighter, Match } = require('../models');
 const path = require('path');
 const fs = require('fs');
-
+const upload = require('../middleware/upload');
 const fighterController = {
   // Получение всех бойцов
   getAllFighters: async (req, res) => {
