@@ -25,7 +25,7 @@ app.use(cors({
   optionsSuccessStatus: 204
 }) );
 // Синхронизация базы данных
-db.sequelize.sync({ force: true }) // force: false, чтобы не удалять таблицы каждый раз
+db.sequelize.sync({ force: false }) // force: false, чтобы не удалять таблицы каждый раз
   .then(() => {
     console.log("База данных синхронизирована!");
   })
