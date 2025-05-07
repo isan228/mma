@@ -4,16 +4,16 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // Конфигурируем Cloudinary
 cloudinary.config({
-  cloud_name: 'dpdbblizf', // Замените на ваш cloud_name
-  api_key: '551671769166255', // Замените на ваш api_key
-  api_secret: 'BN4WB-2pGqjHXH4DceAPQOukKUM' // Замените на ваш api_secret
+  cloud_name: 'dpdbblizf',  // Заменить на свой cloud_name
+  api_key: '551671769166255',  // Заменить на свой api_key
+  api_secret: 'BN4WB-2pGqjHXH4DceAPQOukKUM'  // Заменить на свой api_secret
 });
 
-// Настройка хранилища для Cloudinary
+// Настроить хранилище для Cloudinary
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'uploads', // Папка в Cloudinary для хранения изображений
+    folder: 'uploads', // Папка для хранения изображений в Cloudinary
     allowedFormats: ['jpg', 'jpeg', 'png', 'webp'], // Разрешенные форматы
   },
 });

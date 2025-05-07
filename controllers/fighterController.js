@@ -1,7 +1,9 @@
 const { Fighter, Match } = require('../models');
 const path = require('path');
 const fs = require('fs');
+const cloudinary = require('cloudinary').v2;  // Импортируем cloudinary
 const upload = require('../middleware/upload');
+
 const fighterController = {
   // Получение всех бойцов
   getAllFighters: async (req, res) => {
@@ -19,26 +21,14 @@ const fighterController = {
     upload.single('photo'),  // Обрабатываем одно изображение, ключ поля 'photo'
     async (req, res) => {
       try {
-        const {
-          name,
-          birthYear, // Вместо age
-          gender,    // Новый пол
-          country,
-          height,
-          weight,
-          category,
-          style,
-          wins = 0,
-          losses = 0,
-          team,
-          trainer,
-          isPaid = false
-        } = req.body;
+        const { name, birthYear, gender, country, height, weight, category, style, wins = 0, losses = 0, team, trainer, isPaid = false } = req.body;
 
         // Проверка файла
         let photo_url = null;
         if (req.file) {
-          photo_url = req.file.path;  // Используем URL изображения, полученный от Cloudinary
+          // Загружаем фото в Cloudinary
+          const result = await cloudinary.uploader.upload(req.file.path);
+          photo_url = result.secure_url;  // Сохраняем URL фото
         }
 
         const newFighter = await Fighter.create({
@@ -60,7 +50,7 @@ const fighterController = {
 
         res.status(201).json(newFighter);
       } catch (err) {
-        console.error(err);
+        console.error('Ошибка при добавлении бойца:', err);
         res.status(500).send('Ошибка при добавлении бойца');
       }
     }
@@ -82,13 +72,13 @@ const fighterController = {
 
   // Обновление данных бойца
   updateFighter: [
-    upload.single('photo'),  // Обрабатываем одно изображение при обновлении
+    upload.single('photo'),
     async (req, res) => {
       try {
         const {
           name,
-          birthYear, // Вместо age
-          gender,    // Новый пол
+          birthYear,
+          gender,
           country,
           height,
           weight,
@@ -117,8 +107,18 @@ const fighterController = {
           isPaid: isPaid === true || isPaid === 'true'
         };
 
+        const fighter = await Fighter.findByPk(req.params.id);
+
+        // Удаляем старое фото из Cloudinary, если оно есть
+        if (fighter.photo_url && req.file) {
+          const publicId = path.basename(fighter.photo_url, path.extname(fighter.photo_url));
+          await cloudinary.uploader.destroy(publicId);  // Удаляем старую фотографию из Cloudinary
+        }
+
         if (req.file) {
-          updateData.photo_url = req.file.path;  // Используем URL изображения, полученный от Cloudinary
+          // Загружаем новое фото в Cloudinary
+          const result = await cloudinary.uploader.upload(req.file.path);
+          updateData.photo_url = result.secure_url;  // Обновляем URL фотографии
         }
 
         const [updated] = await Fighter.update(updateData, { where: { id: req.params.id } });
@@ -130,11 +130,12 @@ const fighterController = {
         const updatedFighter = await Fighter.findByPk(req.params.id);
         res.json(updatedFighter);
       } catch (err) {
-        console.error(err);
+        console.error('Ошибка при обновлении бойца:', err);
         res.status(500).json({ error: 'Ошибка при обновлении бойца' });
       }
     }
   ],
+
 
   // Удаление бойца
   deleteFighter: async (req, res) => {
@@ -143,6 +144,13 @@ const fighterController = {
       if (!fighter) {
         return res.status(404).json({ error: 'Боец не найден' });
       }
+
+      // Удаляем фото из Cloudinary, если оно есть
+      if (fighter.photo_url) {
+        const publicId = fighter.photo_url.split('/').pop().split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+      }
+
       await Fighter.destroy({ where: { id: req.params.id } });
       res.sendStatus(204);
     } catch (err) {
