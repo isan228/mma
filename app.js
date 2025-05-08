@@ -15,7 +15,7 @@ const newsRoutes = require('./routes/newsRoutes');
 const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
-const port = 3000;
+const port = 3001;
 
 app.use(cors({
   origin: 'https://mma-3mwk.onrender.com',
@@ -50,7 +50,7 @@ app.use('/api/search', searchRoutes);
 app.use('/news', newsRoutes);
 app.use('/api/users', userRoutes); // Роуты для регистрации и логина
 
-
+app.use('/trainers', trainerRoutes);
 // Главная страница
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

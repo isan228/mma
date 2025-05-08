@@ -166,6 +166,60 @@
       background: linear-gradient(to right, transparent, rgba(255, 0, 0, 0.5), transparent);
       margin: 15px auto;
     }
+    .trainer-photo img {
+  display: block;
+  margin: 0 auto 20px;
+  box-shadow: 0 0 15px rgba(255, 77, 77, 0.4);
+  border: 3px solid rgba(255, 77, 77, 0.3);
+}
+.trainer-specialty {
+  background-color: rgba(255, 77, 77, 0.1);
+  padding: 10px 15px;
+  border-left: 4px solid #ff4d4d;
+  margin: 15px 0;
+  font-style: italic;
+  color: #f0f0f0;
+  border-radius: 4px;
+}
+.trainer-students ul {
+  list-style-type: square;
+  padding-left: 20px;
+}
+
+.trainer-students li {
+  margin-bottom: 5px;
+  color: #ccc;
+  transition: all 0.2s ease;
+}
+
+.trainer-students li:hover {
+  color: #ff6666;
+  transform: translateX(5px);
+}
+.search-container {
+  position: relative;
+  margin-left: 15px;
+}
+
+.search-input {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: none;
+  margin-top: 5px;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 77, 77, 0.5);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  width: 200px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #ff4d4d;
+  box-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
+}
   </style>
 </head>
 <body>
@@ -216,7 +270,9 @@
     <div class="container">
       <div class="trainer-card">
         <div id="trainer-name" class="trainer-name">Загрузка...</div>
-        
+        <div class="trainer-photo">
+          <img id="trainer-photo" src="" alt="Фото тренера" class="img-fluid rounded-circle" style="max-width: 150px; margin: 0 auto; display: block;">
+        </div>
         <table class="stats-table">
           <tr>
             <td class="stats-label">Возраст</td>
@@ -284,31 +340,46 @@
     if (!res.ok) throw new Error('Тренер не найден');
 
     const trainer = await res.json();
-
+  
     // Отображаем данные на странице
     document.getElementById('trainer-name').textContent = trainer.name || 'Нет имени';
     document.getElementById('trainer-age').textContent = trainer.experience || 'Не указан';
     document.getElementById('trainer-team').textContent = trainer.team?.name || 'Нет команды';
-
+    const trainerPhoto = document.getElementById('trainer-photo');
+    
+      trainerPhoto.src = trainer.photo_url; // Указываем путь к фото тренера
+    
     // Отображаем список бойцов
     const studentsList = document.getElementById('trainer-students-list');
-    studentsList.innerHTML = '';
-    if (trainer.Fighters && trainer.Fighters.length > 0) {
-      trainer.Fighters.forEach(fighter => {
-        const li = document.createElement('li');
-        li.textContent = fighter.name;
-        studentsList.appendChild(li);
-      });
-    } else {
-      studentsList.innerHTML = '<li>Нет бойцов</li>';
-    }
+studentsList.innerHTML = '';
+
+if (trainer.Fighters && trainer.Fighters.length > 0) {
+  trainer.Fighters.forEach(fighter => {
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.textContent = fighter.name;
+    link.href = `http://localhost:3001/fighter.html?id=${fighter.id}`;
+    link.style.textDecoration = 'none'; // по желанию, убрать подчёркивание
+    link.style.color = 'inherit';       // по желанию, сохранить цвет
+    li.appendChild(link);
+    studentsList.appendChild(li);
+  });
+} else {
+  studentsList.innerHTML = '<li>Нет бойцов</li>';
+}
 
   } catch (err) {
     console.error('Ошибка при загрузке данных тренера:', err);
     document.getElementById('trainer-name').textContent = 'Ошибка загрузки';
   }
 }
-
+function toggleSearch() {
+    const input = document.getElementById('search-input-header');
+    input.style.display = input.style.display === 'block' ? 'none' : 'block';
+    if (input.style.display === 'block') {
+      input.focus();
+    }
+  }
 
   // Запуск при загрузке страницы
   document.addEventListener('DOMContentLoaded', () => {
