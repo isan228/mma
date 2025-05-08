@@ -4,6 +4,7 @@
   "password": "ngkMpjrJE9vLbgQOoorFNQ9yU5b0tWgI",
   "database": "mma_bnf9",
   "host": "dpg-d0cth09r0fns73c9kk8g-a"
+  
   "port": 5432
 },
   "test": {
