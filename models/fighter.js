@@ -7,6 +7,11 @@ module.exports = (sequelize, DataTypes) => {
       Fighter.belongsTo(models.Team, { foreignKey: 'teamId', as: 'team' });
       Fighter.hasMany(models.Match, { foreignKey: 'fighterId', as: 'MatchesAsFighter' });
       Fighter.hasMany(models.Match, { foreignKey: 'opponentId', as: 'MatchesAsOpponent' });
+      Fighter.belongsTo(models.Sport, { foreignKey: 'sportId', as: 'sport' });
+      Fighter.belongsTo(models.WeightCategory, {
+  foreignKey: 'weightCategoryId',
+  as: 'weightCategory',
+});
     }
 
     // Виртуальное поле для возраста
@@ -22,9 +27,14 @@ module.exports = (sequelize, DataTypes) => {
     birthYear: DataTypes.INTEGER, // год рождения вместо возраста
     country: DataTypes.STRING,
     height: DataTypes.FLOAT,
-    weight: DataTypes.FLOAT,
-    category: DataTypes.STRING,
-    style: DataTypes.STRING,
+   weightCategoryId: {
+  type: DataTypes.INTEGER,
+  allowNull: true,
+},
+sportId: {
+  type: DataTypes.INTEGER,
+  allowNull: true,
+},
     photo_url: DataTypes.STRING,
     teamId: DataTypes.INTEGER,
     trainerId: DataTypes.INTEGER,

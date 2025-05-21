@@ -28,6 +28,8 @@
     <a class="nav-link" href="javascript:void(0);" onclick="showTab('matches')">Матчи</a>
     <a class="nav-link" href="javascript:void(0);" onclick="showTab('news')">Новости</a>
     <a class="nav-link" href="javascript:void(0);" onclick="showTab('trainers')">Тренеры</a>
+    <a class="nav-link" href="javascript:void(0);" onclick="showTab('categories')">Категории</a>
+    <a class="nav-link" href="javascript:void(0);" onclick="showTab('sports')">Спорт</a>
     <a href="generate.html">GENERATE</a>
   </nav>
 
@@ -66,18 +68,21 @@
         <label for="height" class="form-label">Рост (см)</label>
         <input type="number" class="form-control" id="height" name="height" required>
       </div>
+    
       <div class="mb-3">
-        <label for="weight" class="form-label">Вес (кг)</label>
-        <input type="number" class="form-control" id="weight" name="weight" required>
+        <label for="weightCategory" class="form-label">Весовая категория</label>
+        <select id="weightCategory" class="form-control" name="weightCategory" required>
+          <option value="">Выберите категорию</option>
+          <!-- Категории будут подгружены динамически -->
+        </select>
       </div>
-      <div class="mb-3">
-        <label for="category" class="form-label">Категория</label>
-        <input type="text" class="form-control" id="category" name="category" required>
-      </div>
-      <div class="mb-3">
-        <label for="style" class="form-label">Стиль</label>
-        <input type="text" class="form-control" id="style" name="style" required>
-      </div>
+ <div class="mb-3">
+  <label for="sport-id" class="form-label">Стиль/Спорт</label>
+  <select id="sport-id" name="sport_id" class="form-select" required>
+    <option value="">Выберите стиль</option>
+    <!-- Здесь будут стили -->
+  </select>
+</div>
       <div class="mb-3">
         <label for="birthYear" class="form-label">Год рождения</label>
         <input type="number" class="form-control" id="birthYear" name="birthYear" required>
@@ -181,11 +186,20 @@
         <label for="event_name" class="form-label">Название события</label>
         <input type="text" name="event_name" class="form-control" placeholder="Например: UFC 300">
       </div>
-      <div class="mb-3">
+   <div class="mb-3">
         <label for="weightCategory" class="form-label">Весовая категория</label>
-        <input type="text" name="weightCategory" class="form-control" placeholder="Весовая категория" required>
+        <select id="weightCategory" class="form-control" name="weightCategory" required>
+          <option value="">Выберите категорию</option>
+          <!-- Категории будут подгружены динамически -->
+        </select>
       </div>
-  
+  <div class="mb-3">
+  <label for="sportId" class="form-label">Выберите вид спорта</label>
+  <select name="sportId" class="form-control" required>
+    <option value="">Выберите вид спорта</option>
+    <!-- Динамически заполняется -->
+  </select>
+</div>
       <div class="mb-3">
         <label for="matchDate" class="form-label">Дата и время матча</label>
         <input type="datetime-local" name="matchDate" class="form-control" required>
@@ -216,6 +230,21 @@
     <h2>Список команд</h2>
     <ul id="teams-list" class="list-group"></ul>
   </div>
+  <div id="sports" class="tab">
+    <h2>Добавить стиль</h2>
+    <form id="sport-form">
+      <div class="mb-3">
+        <label for="sport-name" class="form-label">Название стиля</label>
+        <input type="text" id="sport-name" name="name" class="form-control" placeholder="Например: Бокс" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Добавить стиль</button>
+    </form>
+  
+    <h2 class="mt-4">Список стилей</h2>
+    <ul id="sport-list" class="list-group mt-2">
+      <!-- Стили будут подгружаться сюда -->
+    </ul>
+  </div>
 
   <div id="news" class="tab">
     <h2>Добавить новость</h2>
@@ -232,6 +261,14 @@
     <h2>Список новостей</h2>
     <ul id="news-list" class="list-group"></ul>
   </div>
+  <div id="categories" class="tab">
+  <h2>Добавить весовую категорию</h2>
+<form id="category-form">
+ <input type="text" id="category-weight" placeholder="Введите вес категории" />
+  <button type="submit">Добавить</button>
+</form>
+  <ul id="category-list" class="list-group"></ul>
+</div>
 
   <script>
     window.onload = function () {
@@ -247,10 +284,12 @@
       document.getElementById(tabId).classList.add('active');
     }
 
-    showTab('fighters');  // Показываем вкладку бойцов по умолчанию
-
+    showTab('fighters');  // Покаtзываем вкладку бойцов по умолчанию
+    
   
   </script>
+    <script src="js/sport.js"></script>
+    <script src="js/weight.js"></script>
   <script src="js/news.js"></script>
   <script src="js/match.js"></script>
  <script src="js/fighter.js"></script>

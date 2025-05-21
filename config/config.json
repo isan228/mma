@@ -1,25 +1,25 @@
 {
  "development": {
- "username": "mma_bnf9_user",
-  "password": "ngkMpjrJE9vLbgQOoorFNQ9yU5b0tWgI",
-  "database": "mma_bnf9",
-  "host": "dpg-d0cth09r0fns73c9kk8g-a",
+ "username": "postgres",
+  "password": "Enigma10",
+  "database": "mma11",
+  "host": "localhost",
   "dialect": "postgres",
   "port": 5432
 },
   "test": {
-"username": "mma_bnf9_user",
-  "password": "ngkMpjrJE9vLbgQOoorFNQ9yU5b0tWgI",
-  "database": "mma_bnf9",
-  "host": "dpg-d0cth09r0fns73c9kk8g-a",
+ "username": "postgres",
+  "password": "Enigma10",
+  "database": "mma11",
+  "host": "localhost",
   "dialect": "postgres",
   "port": 5432
   },
   "production": {
-"username": "mma_bnf9_user",
-  "password": "ngkMpjrJE9vLbgQOoorFNQ9yU5b0tWgI",
-  "database": "mma_bnf9",
-  "host": "dpg-d0cth09r0fns73c9kk8g-a",
+ "username": "postgres",
+  "password": "Enigma10",
+  "database": "mma11",
+  "host": "localhost",
   "dialect": "postgres",
   "port": 5432
   }

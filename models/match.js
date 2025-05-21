@@ -10,6 +10,8 @@ module.exports = (sequelize, DataTypes) => {
 
       // Связь с турниром
       Match.belongsTo(models.Tournament, { foreignKey: 'tournamentId' });
+       Match.belongsTo(models.WeightCategory, { foreignKey: 'weightCategoryId', as: 'weightCategory' });
+             Match.belongsTo(models.Sport, { foreignKey: 'sportId', as: 'sport' });
     }
   }
 
@@ -45,6 +47,14 @@ module.exports = (sequelize, DataTypes) => {
     description: {
       type: DataTypes.TEXT,
       allowNull: true,
+    },
+     weightCategoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+     sportId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
   }, {
     sequelize,

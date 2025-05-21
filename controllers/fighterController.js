@@ -21,8 +21,8 @@ const fighterController = {
     upload.single('photo'),  // Обрабатываем одно изображение, ключ поля 'photo'
     async (req, res) => {
       try {
-        const { name, birthYear, gender, country, height, weight, category, style, wins = 0, losses = 0, team, trainer, isPaid = false } = req.body;
-
+        const { name, birthYear, gender, country, height, weight, category, weightCategoryId, sportId, wins = 0, losses = 0, team, trainer, isPaid = false } = req.body;
+console.log('BODY:', req.body);
         // Проверка файла
         let photo_url = null;
         if (req.file) {
@@ -38,8 +38,8 @@ const fighterController = {
           country,
           height,
           weight,
-          category,
-          style,
+           weightCategoryId,
+         sportId,
           photo_url,
           wins,
           losses,
@@ -81,9 +81,9 @@ const fighterController = {
           gender,
           country,
           height,
-          weight,
-          category,
-          style,
+      
+          weightCategoryId,
+          sportId,
           wins,
           losses,
           team,
@@ -97,9 +97,8 @@ const fighterController = {
           gender,
           country,
           height,
-          weight,
-          category,
-          style,
+                  weightCategoryId,
+         sportId,
           wins,
           losses,
           teamId: team,

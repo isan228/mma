@@ -12,6 +12,9 @@ const searchRoutes = require('./routes/search');
 const userRoutes = require('./routes/userRoutes');  // Роуты для регистрации и логина
 const { verifyToken } = require('./middleware/auth');
 const newsRoutes = require('./routes/newsRoutes');
+const sportRoutes = require('./routes/sportRoutes');
+
+const weightCategoryRoutes = require('./routes/weightCategoryRoutes');
 const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
@@ -40,6 +43,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Подключение маршрутов
+app.use('/api/sports', sportRoutes);
+app.use('/api/categories', weightCategoryRoutes);
 app.use('/api/fighters', fighterRoutes);
 app.use('/api/matches', matchRoutes);  // Роуты для матчей
 app.use('/api/tournaments', tournamentRoutes);  // Роуты для турниров

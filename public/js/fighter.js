@@ -30,7 +30,18 @@ async function loadFighters() {
     console.error(err);
   }
 }
-
+  async function loadSportsToSelect() {
+    const res = await fetch('/api/sports');
+    const sports = await res.json();
+    const select = document.getElementById('sport-id');
+    select.innerHTML = '<option value="">Выберите стиль</option>';
+    sports.forEach(s => {
+      const option = document.createElement('option');
+      option.value = s.id;
+      option.textContent = s.name;
+      select.appendChild(option);
+    });
+  }
 // Отправка формы (добавление/обновление)
 document.getElementById('fighter-form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -40,7 +51,8 @@ document.getElementById('fighter-form').addEventListener('submit', async (e) => 
 
   // Явно добавляем галочку оплаты
   formData.set('isPaid', form.elements.paid.checked ? 'true' : 'false');
-
+  formData.set('weightCategoryId', form.elements.weightCategory.value);
+  formData.set('sportId', form.elements['sport-id'].value)
   // Если нет выбранного файла, старое фото_url оставляем как есть (если редактирование)
   if (!formData.get('photo')) {
     formData.delete('photo');
@@ -119,9 +131,10 @@ async function editFighter(id) {
  
     document.getElementById('country').value = fighter.country;
     document.getElementById('height').value = fighter.height;
-    document.getElementById('weight').value = fighter.weight;
-    document.getElementById('category').value = fighter.category;
-    document.getElementById('style').value = fighter.style;
+ 
+    document.getElementById('weightCategory').value = fighter.weightCategoryId ;
+document.getElementById('sport-id').value = fighter.sport_id || '';
+
     document.getElementById('team').value = fighter.team_id;
     document.getElementById('trainer').value = fighter.trainer_id;
     document.getElementById('wins').value = fighter.wins || 0;
@@ -166,8 +179,29 @@ async function loadTeamsAndTrainers() {
   }
 }
 
+async function loadWeightCategories() {
+  try {
+    const response = await fetch('/api/categories');
+    
+    const categories = await response.json();
+    
+    const select = document.getElementById('weightCategory');
+    select.innerHTML = '<option value="">Выберите категорию</option>';
+    categories.forEach(cat => {
+      const option = document.createElement('option');
+      option.value = cat.id;
+      option.textContent = cat.weight; // или cat.title если поле называется по-другому
+      select.appendChild(option);
+    });
+  } catch (err) {
+    console.error(err);
+    alert('Ошибка при загрузке весовых категорий');
+  }
+}
 // При загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
   loadFighters();
   loadTeamsAndTrainers();
+  loadWeightCategories();
+   loadSportsToSelect();
 });

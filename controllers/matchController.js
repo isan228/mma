@@ -1,4 +1,4 @@
-const { Match, Fighter, Tournament } = require('../models');
+const { Match, Fighter, Tournament,Sport, WeightCategory } = require('../models');
 
 // Создание матча
 exports.createMatch = async (req, res) => {
@@ -11,6 +11,8 @@ exports.createMatch = async (req, res) => {
       result,
       method,
       event_name,
+      sportId, // <--- новое поле
+  weightCategoryId, // <--- новое поле
       description
     } = req.body;
 
@@ -27,6 +29,8 @@ exports.createMatch = async (req, res) => {
       opponentId,
       tournamentId,
       date,
+        sportId,
+  weightCategoryId,
       result: result || '',
       method: method || '',
       event_name: event_name?.trim() || 'Не указан',
@@ -52,9 +56,17 @@ exports.getAllMatches = async (req, res) => {
           model: Fighter,
           as: 'Opponent', // Это alias для opponentId
         },
+         {
+    model: Sport,
+    as: 'sport', // обязательно укажи alias как в модели
+  },
         {
           model: Tournament, // Если есть
-        }
+        },
+        {
+    model: WeightCategory,
+    as: 'weightCategory', // alias из модели
+  }
       ]
     });
 
@@ -99,6 +111,8 @@ exports.updateMatch = async (req, res) => {
       tournamentId,
       date,
       result,
+        sportId,
+  weightCategoryId,
       method,
       event_name,
       description
@@ -109,6 +123,8 @@ exports.updateMatch = async (req, res) => {
       opponentId,
       tournamentId,
       date,
+        sportId,
+  weightCategoryId,
       result: result || '',
       method: method || '',
       event_name: event_name?.trim() || 'Не указан',
