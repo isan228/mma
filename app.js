@@ -74,6 +74,6 @@ app.get('/treners', (req, res) => {
 
 
 // Запуск сервера
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`Сервер запущен на http://localhost:${port}`);
 });
