@@ -80,10 +80,9 @@ exports.deleteTournament = async (req, res) => {
   }
 };
 async function generateTournamentBracket(req, res) {
-  const { tournamentId } = req.body;  // Убираем категорию из параметров
+  const { tournamentId } = req.body;
 
   try {
-    // Загружаем всех бойцов без фильтрации по категории
     const fighters = await Fighter.findAll({
       include: ['team']
     });
@@ -92,59 +91,47 @@ async function generateTournamentBracket(req, res) {
       return res.status(400).json({ message: 'Недостаточно бойцов для турнира' });
     }
 
-    // Группируем бойцов по командам
-    const teams = {};
-    fighters.forEach(fighter => {
-      if (!teams[fighter.teamId]) teams[fighter.teamId] = [];
-      teams[fighter.teamId].push(fighter);
-    });
+    const shuffled = [...fighters].sort(() => 0.5 - Math.random());
+    const matches = [];
 
-    // Создаем массив бойцов, перетасованный по командам (по кругу)
-    const ordered = [];
-    let hasFighters = true;
-    while (hasFighters) {
-      hasFighters = false;
-      for (const teamId in teams) {
-        if (teams[teamId].length > 0) {
-          ordered.push(teams[teamId].shift());
-          hasFighters = true;
+    while (shuffled.length >= 2) {
+      let found = false;
+
+      for (let i = 1; i < shuffled.length; i++) {
+        if (shuffled[0].teamId !== shuffled[i].teamId) {
+          matches.push({
+            fighterId: shuffled[0].id,
+            opponentId: shuffled[i].id,
+            tournamentId,
+            date: new Date()
+          });
+          shuffled.splice(i, 1);
+          shuffled.splice(0, 1);
+          found = true;
+          break;
         }
+      }
+
+      if (!found) {
+        matches.push({
+          fighterId: shuffled[0].id,
+          opponentId: shuffled[1].id,
+          tournamentId,
+          date: new Date()
+        });
+        shuffled.splice(0, 2);
       }
     }
 
-    const matches = [];
-
-    for (let i = 0; i < ordered.length - 1; i += 2) {
-      const fighter1 = ordered[i];
-      const fighter2 = ordered[i + 1];
-
-      // Проверка, что бойцы не из одной команды
-      if (fighter1.teamId === fighter2.teamId) {
-        // Попробуем найти замену дальше
-        let swapped = false;
-        for (let j = i + 2; j < ordered.length; j++) {
-          if (ordered[j].teamId !== fighter1.teamId) {
-            // Меняем местами
-            [ordered[i + 1], ordered[j]] = [ordered[j], ordered[i + 1]];
-            swapped = true;
-            break;
-          }
-        }
-
-        if (!swapped) {
-          console.log('Не удалось избежать пары из одной команды');
-        }
-      }
-
+    if (shuffled.length === 1) {
       matches.push({
-        fighterId: ordered[i].id,
-        opponentId: ordered[i + 1].id,
+        fighterId: shuffled[0].id,
+        opponentId: null,
         tournamentId,
         date: new Date()
       });
     }
 
-    // Сохраняем матчи
     await Match.bulkCreate(matches);
 
     res.json({ message: 'Турнирная сетка успешно создана', matches });

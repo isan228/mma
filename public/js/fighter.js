@@ -179,18 +179,16 @@ async function loadTeamsAndTrainers() {
   }
 }
 
-async function loadWeightCategories() {
+async function loadWeightCategoriesForFighters() {
   try {
     const response = await fetch('/api/categories');
-    
     const categories = await response.json();
-    
     const select = document.getElementById('weightCategory');
     select.innerHTML = '<option value="">Выберите категорию</option>';
     categories.forEach(cat => {
       const option = document.createElement('option');
       option.value = cat.id;
-      option.textContent = cat.weight; // или cat.title если поле называется по-другому
+      option.textContent = cat.weight;
       select.appendChild(option);
     });
   } catch (err) {
@@ -202,6 +200,6 @@ async function loadWeightCategories() {
 document.addEventListener('DOMContentLoaded', () => {
   loadFighters();
   loadTeamsAndTrainers();
-  loadWeightCategories();
+  loadWeightCategoriesForFighters();
    loadSportsToSelect();
 });

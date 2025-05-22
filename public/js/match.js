@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   loadSports();
   loadWeightCategories();
 
-  document.getElementById('match-form').addEventListener('submit', addMatch);
+  const form = document.getElementById('match-form');
+  form.addEventListener('submit', addMatch);
 });
 
 // Загрузка бойцов и турниров
@@ -44,7 +45,6 @@ async function loadFightersAndTournaments() {
         tournamentSelect.appendChild(option);
       });
     }
-
   } catch (err) {
     console.error('Ошибка при загрузке бойцов или турниров:', err);
     alert('Ошибка при загрузке бойцов или турниров');
@@ -68,25 +68,38 @@ async function loadSports() {
   }
 }
 
+// Загрузка весовых категорий
 async function loadWeightCategories() {
   try {
     const response = await fetch('/api/categories');
-    
+    if (!response.ok) throw new Error(`Ошибка сети: ${response.status}`);
+
     const categories = await response.json();
-    
-    const select = document.getElementById('weightCategory');
-    select.innerHTML = '<option value="">Выберите категорию</option>';
+    console.log('Весовые категории:', categories);  // <- проверяем что пришло
+
+    const select = document.getElementById('weightCategoryId');
+    select.innerHTML = '<option value="">Выберите весовую категорию</option>';
+
+    if (!Array.isArray(categories) || categories.length === 0) {
+      console.warn('Категории пустые или не массив');
+      return;
+    }
+
     categories.forEach(cat => {
+      // Здесь подставляем имя категории - если у тебя другое поле, поменяй на нужное
+      const label = cat.weight || cat.title || cat.name || 'Без названия';
+
       const option = document.createElement('option');
       option.value = cat.id;
-      option.textContent = cat.weight; // или cat.title если поле называется по-другому
+      option.textContent = label;
       select.appendChild(option);
     });
-  } catch (err) {
-    console.error(err);
-    alert('Ошибка при загрузке весовых категорий');
+  } catch (error) {
+    console.error('Ошибка при загрузке весовых категорий:', error);
+    alert('Не удалось загрузить весовые категории');
   }
 }
+
 // Добавление нового матча
 async function addMatch(event) {
   event.preventDefault();
@@ -94,7 +107,7 @@ async function addMatch(event) {
   const fighterId = document.querySelector('[name="fighterId"]').value;
   const opponentId = document.querySelector('[name="opponentId"]').value;
   const tournamentId = document.querySelector('[name="tournamentId"]').value;
-  const weightCategoryId = document.querySelector('[name="weightCategory"]').value;
+  const weightCategoryId = document.querySelector('[name="weightCategoryId"]').value;
   const sportId = document.querySelector('[name="sportId"]').value;
   const matchDate = document.querySelector('[name="matchDate"]').value;
   const descriptionInput = document.querySelector('[name="description"]').value;
@@ -124,6 +137,7 @@ async function addMatch(event) {
     if (response.ok) {
       alert('Матч успешно добавлен!');
       displayMatches();
+      document.getElementById('match-form').reset();
     } else {
       alert('Ошибка при добавлении матча');
       console.error(data.message);
@@ -150,6 +164,7 @@ async function displayMatches() {
         matchElement.innerHTML = `
           <p>Турнир: ${match.Tournament?.name || 'Без турнира'}</p>
           <p>Боец: ${match.Fighter?.name || 'Неизвестен'} vs ${match.Opponent?.name || 'Неизвестен'}</p>
+          <p>Весовая категория: ${match.WeightCategory?.weight || match.WeightCategory?.title || 'Не указана'}</p>
           <p>Дата: ${new Date(match.date).toLocaleString()}</p>
           <button class="btn btn-secondary edit-btn" data-id="${match.id}">Редактировать</button>
           <button class="btn btn-danger" onclick="deleteMatch(${match.id})">Удалить</button>
@@ -202,9 +217,9 @@ async function editMatch(id) {
       document.querySelector('[name="fighterId"]').value = match.fighterId;
       document.querySelector('[name="opponentId"]').value = match.opponentId;
       document.querySelector('[name="tournamentId"]').value = match.tournamentId;
-      document.querySelector('[name="weightCategoryId"]').value = match.weightCategoryId || '';
+      document.querySelector('[name="weightCategoryId"]').value = match.weightCategoryId;
       document.querySelector('[name="sportId"]').value = match.sportId || '';
-      document.querySelector('[name="matchDate"]').value = match.date.slice(0, 16); // YYYY-MM-DDTHH:mm
+      document.querySelector('[name="matchDate"]').value = match.date.slice(0, 16);
       document.querySelector('[name="description"]').value = match.description;
 
       const form = document.getElementById('match-form');
@@ -257,7 +272,7 @@ async function updateMatch(event, id) {
       alert('Матч успешно обновлен!');
       displayMatches();
       document.getElementById('match-form').reset();
-      document.getElementById('match-form').addEventListener('submit', addMatch, { once: true });
+      document.getElementById('match-form').addEventListener('submit', addMatch);
     } else {
       alert('Ошибка при обновлении матча');
     }

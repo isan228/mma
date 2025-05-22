@@ -13,6 +13,7 @@ const userRoutes = require('./routes/userRoutes');  // Роуты для рег�
 const { verifyToken } = require('./middleware/auth');
 const newsRoutes = require('./routes/newsRoutes');
 const sportRoutes = require('./routes/sportRoutes');
+const rankingRoutes = require('./routes/ranking');
 
 const weightCategoryRoutes = require('./routes/weightCategoryRoutes');
 const dotenv = require('dotenv');
@@ -29,8 +30,23 @@ app.use(cors({
 }) );
 // Синхронизация базы данных
 db.sequelize.sync({ force: false }) // force: false, чтобы не удалять таблицы каждый раз
-  .then(() => {
+  .then(async () => {
     console.log("База данных синхронизирована!");
+
+    // Проверяем, есть ли пользователь Adina
+    const user = await db.User.findOne({ where: { username: 'Adina' } });
+
+    if (!user) {
+      await db.User.create({
+        username: 'Adina',
+        password_hash: '$2b$12$L9bW9vWC3uM9mVI2NhveEeoR2xxeKjH4cmTjydZjtMYJ2xtr4yiLi',
+        role: 'admin',
+        created_at: new Date(),
+      });
+      console.log('Пользователь Adina добавлен в БД');
+    } else {
+      console.log('Пользователь Adina уже есть в БД');
+    }
   })
   .catch(err => {
     console.error('Ошибка при синхронизации базы данных:', err);
@@ -44,6 +60,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Подключение маршрутов
 app.use('/api/sports', sportRoutes);
+app.use('/ranking', rankingRoutes);
 app.use('/api/categories', weightCategoryRoutes);
 app.use('/api/fighters', fighterRoutes);
 app.use('/api/matches', matchRoutes);  // Роуты для матчей
@@ -74,6 +91,6 @@ app.get('/treners', (req, res) => {
 
 
 // Запуск сервера
-app.listen(port, () => {
-  console.log(`Сервер запущен на http://localhost:${port}`);
-});
+app.listen(port, '0.0.0.0', () => {
+          console.log(`Сервер запущен на http://localhost:${port}`);
+        });
