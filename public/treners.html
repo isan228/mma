@@ -3,62 +3,153 @@
 <head>
   <meta charset="UTF-8" />
   <title>Список тренеров</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <style>
     body {
       font-family: sans-serif;
-      background-color: #f4f4f4;
+      background-color: #1a1a1a;
+      color: #f8f8f8;
     }
+
+    nav.navbar {
+      background-color: #990000;
+    }
+
+    nav .nav-link {
+      color: white;
+    }
+
+    nav .nav-link:hover {
+      color: #ffc107;
+    }
+
+    .search-container {
+      position: relative;
+    }
+
+    .search-input {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 5px;
+      width: 200px;
+      background-color: white;
+      color: black;
+    }
+
     .trainer-list {
       display: flex;
       flex-wrap: wrap;
       gap: 20px;
       padding: 20px;
+      justify-content: center;
     }
+
     .trainer-card {
-      background: white;
+      background: #2b2b2b;
+      color: white;
       padding: 15px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
       width: 250px;
+      transition: transform 0.2s;
     }
+
+    .trainer-card:hover {
+      transform: scale(1.03);
+    }
+
     .trainer-card img {
       width: 100%;
       height: auto;
       border-radius: 8px;
     }
+
     .trainer-card h3 {
       margin: 10px 0 5px;
+      color: #ff4c4c;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+      color: #ff4c4c;
     }
   </style>
 </head>
 <body>
-  <h1 style="text-align:center;">Наши тренеры</h1>
-  <div class="trainer-list" id="trainerList"></div>
-<h1 style="text-align:center;">здесь был никита</h1>
-  <script>
-    fetch('/trainers') // убедись, что роут подключен как /trainers
-      .then(res => res.json())
-      .then(data => {
-        const list = document.getElementById('trainerList');
-        data.forEach(trainer => {
-          const div = document.createElement('div');
-          div.className = 'trainer-card';
-          div.innerHTML = `
- <a href="/trainer.html?id=${trainer.id}" style="text-decoration: none; color: inherit;">
-    <img src="${trainer.photo_url}" alt="${trainer.name}" />
-    <h3>${trainer.name}</h3>
-    <p><strong>Опыт:</strong> ${trainer.experience} лет</p>
-    <p><strong>Команда:</strong> ${trainer.team?.name || 'Без команды'}</p>
-  </a>
-`;
-          list.appendChild(div);
-        });
-      })
-      .catch(err => {
-        document.getElementById('trainerList').innerText = 'Ошибка загрузки данных.';
-        console.error(err);
+
+<!-- Хедер -->
+<nav class="navbar navbar-expand-lg px-3">
+  <div class="container-fluid">
+    <a class="navbar-brand me-3" href="index.html">
+      <img src="./photo/logo.png" alt="Логотип" height="40">
+    </a>
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item px-2"><a class="nav-link" href="news.html">Новости</a></li>
+        <li class="nav-item px-2"><a class="nav-link" href="treners.html">Тренера</a></li>
+        <li class="nav-item px-2"><a class="nav-link" href="tournaments.html">Турниры</a></li>
+        <li class="nav-item px-2"><a class="nav-link" href="rank.html">Рейтинг</a></li>
+      </ul>
+    </div>
+    <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="d-flex align-items-center">
+      <div class="search-container">
+        <button class="search-btn text-white" onclick="toggleSearch()">
+          <i class="bi bi-search" style="font-size: 1.5rem;"></i>
+        </button>
+        <input type="text" id="search-input-header" class="form-control search-input" placeholder="Введите имя бойца">
+      </div>
+    </div>
+  </div>
+</nav>
+
+<h1>Наши тренеры</h1>
+<div class="container my-4">
+  <div class="row" id="trainerList"></div>
+</div>
+
+<script>
+  function toggleSearch() {
+    const input = document.getElementById('search-input-header');
+    input.style.display = input.style.display === 'block' ? 'none' : 'block';
+  }
+
+  fetch('/trainers')
+    .then(res => res.json())
+    .then(data => {
+      const list = document.getElementById('trainerList');
+      data.forEach(trainer => {
+        const div = document.createElement('div');
+        div.className = 'trainer-card';
+        div.innerHTML = `
+          <a href="/trainer.html?id=${trainer.id}">
+            <img src="${trainer.photo_url}" alt="${trainer.name}" />
+            <h3>${trainer.name}</h3>
+            <p><strong>Год рождения:</strong> ${trainer.experience} </p>
+            <p><strong>Команда:</strong> ${trainer.team?.name || 'Без команды'}</p>
+          </a>
+        `;
+        list.appendChild(div);
       });
-      console.log('Фото тренера:', trainer.photo_url);
-  </script>
+    })
+    .catch(err => {
+      document.getElementById('trainerList').innerText = 'Ошибка загрузки данных.';
+      console.error(err);
+    });
+    
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

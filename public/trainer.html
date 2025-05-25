@@ -220,6 +220,15 @@
   border-color: #ff4d4d;
   box-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
 }
+.trainer-img-square {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 20px;
+  box-shadow: 0 0 15px rgba(255, 77, 77, 0.4);
+  border: 3px solid rgba(255, 77, 77, 0.3);
+}
   </style>
 </head>
 <body>
@@ -271,7 +280,7 @@
       <div class="trainer-card">
         <div id="trainer-name" class="trainer-name">Загрузка...</div>
         <div class="trainer-photo">
-          <img id="trainer-photo" src="" alt="Фото тренера" class="img-fluid rounded-circle" style="max-width: 150px; margin: 0 auto; display: block;">
+         <img id="trainer-photo" src="" alt="Фото тренера" class="img-fluid trainer-img-square">
         </div>
         <table class="stats-table">
           <tr>
@@ -282,7 +291,10 @@
           </tr>
         </table>
         
-        <div id="trainer-specialty" class="trainer-specialty">Загрузка...</div>
+        <td class="stats-label">виды тренировок</td>
+        <div id="trainer-sports" class="trainer-specialty">Загрузка...</div>
+        <td class="stats-label">Достижения</td>
+        <div id="trainer-achievements" class="trainer-specialty">Загрузка...</div>
 
         <div class="trainer-students">
           <h5>Студенты:</h5>
@@ -345,6 +357,9 @@
     document.getElementById('trainer-name').textContent = trainer.name || 'Нет имени';
     document.getElementById('trainer-age').textContent = trainer.experience || 'Не указан';
     document.getElementById('trainer-team').textContent = trainer.team?.name || 'Нет команды';
+     document.getElementById('trainer-sports').textContent = trainer.sports || 'Нет команды';
+    
+     document.getElementById('trainer-achievements').textContent = trainer.achievements || 'Нет команды';
     const trainerPhoto = document.getElementById('trainer-photo');
     
       trainerPhoto.src = trainer.photo_url; // Указываем путь к фото тренера
@@ -358,14 +373,16 @@ if (trainer.Fighters && trainer.Fighters.length > 0) {
     const li = document.createElement('li');
     const link = document.createElement('a');
     link.textContent = fighter.name;
-    link.href = `http://localhost:3001/fighter.html?id=${fighter.id}`;
+  link.href = `http://localhost:3001/fighter.html?id=${fighter.id || fighter.fighter_id}`;
     link.style.textDecoration = 'none'; // по желанию, убрать подчёркивание
     link.style.color = 'inherit';       // по желанию, сохранить цвет
     li.appendChild(link);
     studentsList.appendChild(li);
+    console.log('Fighter object:', fighter);
   });
 } else {
   studentsList.innerHTML = '<li>Нет бойцов</li>';
+  
 }
 
   } catch (err) {

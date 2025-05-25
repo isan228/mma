@@ -1,4 +1,4 @@
-const { Fighter, Match } = require('../models');
+const { Fighter, Match,WeightCategory, Sport } = require('../models');
 const path = require('path');
 const fs = require('fs');
 const cloudinary = require('cloudinary').v2;  // Импортируем cloudinary
@@ -56,19 +56,36 @@ console.log('BODY:', req.body);
     }
   ],
 
-  // Получение бойца по ID
-  getFighterById: async (req, res) => {
-    try {
-      const fighter = await Fighter.findByPk(req.params.id);
-      if (!fighter) {
-        return res.status(404).json({ error: 'Боец не найден' });
-      }
-      res.json(fighter);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Ошибка при получении бойца' });
+getFighterById: async (req, res) => {
+  try {
+    const fighter = await Fighter.findByPk(req.params.id, {
+      include: [
+        {
+          model: WeightCategory,
+          as: 'weightCategory',
+          attributes: ['id', 'weight']
+        },
+        {
+          model: Sport,
+          as: 'sport',
+          attributes: ['id', 'name']
+        }
+      ]
+    });
+
+    console.log('fighter with associations:', JSON.stringify(fighter, null, 2));  // <-- добавь сюда
+
+    if (!fighter) {
+      return res.status(404).json({ error: 'Боец не найден' });
     }
-  },
+
+    res.json(fighter);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Ошибка при получении бойца' });
+  }
+},
+
 
   // Обновление данных бойца
   updateFighter: [

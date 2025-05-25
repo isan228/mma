@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
   foreignKey: 'weightCategoryId',
   as: 'weightCategory',
 });
-    }
+    } 
 
     // Виртуальное поле для возраста
     getAge() {

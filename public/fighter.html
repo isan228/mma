@@ -59,15 +59,15 @@
       margin-bottom: 20px;
     }
 
-    .fighter-photo {
-      width: 250px;
-      height: 250px;
-      object-fit: cover;
-      border-radius: 50%;
-      border: 5px solid #ff4d4d;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-      margin-bottom: 20px;
-    }
+  .fighter-photo {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 0; /* квадратные углы */
+  border: 2px solid #ff4d4d;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+  margin-bottom: 20px;
+}
 
     .stats-table {
     width: 100%;
@@ -183,37 +183,27 @@
 
  
   <nav class="navbar navbar-expand-lg px-3">
-    <div class="container-fluid">
-      <a class="navbar-brand me-3" href="index.html">
-        <img src="./photo/logo.png" alt="Логотип">
-      </a>
+  <div class="container-fluid">
 
-      <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      
-      <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+    <a class="navbar-brand me-3" href="index.html">
+      <img src="./photo/logo.png" alt="Логотип">
+    </a>
+ <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
         <ul class="navbar-nav">
-     
+          
           <li class="nav-item px-2"><a class="nav-link" href="news.html">Новости</a></li>
           <li class="nav-item px-2"><a class="nav-link" href="treners.html">Тренера</a></li>
           <li class="nav-item px-2"><a class="nav-link" href="tournaments.html">Турниры</a></li>
+          <li class="nav-item px-2"><a class="nav-link" href="rank.html">Рейтинг</a></li>
         </ul>
       </div>
-
-      <div class="d-flex align-items-center">
-        <a href="https://www.youtube.com/" target="_blank" class="text-white mx-2">
-          <i class="bi bi-youtube" style="font-size: 1.5rem;"></i>
-        </a>
-        <a href="https://www.instagram.com/" target="_blank" class="text-white mx-2">
-          <i class="bi bi-instagram" style="font-size: 1.5rem;"></i>
-        </a>
-        <a href="https://wa.me/1234567890" target="_blank" class="text-white mx-2">
-          <i class="bi bi-whatsapp" style="font-size: 1.5rem;"></i>
-        </a>
-      </div>
-    </div>
-  </nav>
+    <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+ 
+  </div>
+</nav>
 
   <!-- Контент -->
   <div class="container content-wrapper">
@@ -227,7 +217,13 @@
       <table class="table stats-table">
         <tr><td>Возраст</td><td id="fighter-age">Загрузка...</td></tr>
         <tr><td>Рост</td><td id="fighter-height">Загрузка...</td></tr>
-        <tr><td>Вес</td><td id="fighter-weight">Загрузка...</td></tr>
+       
+        <tr>
+  <td>Вес</td>
+  <td id="fighter-weight-category">Загрузка...</td>
+</tr>
+ <tr><td>вид спорта
+ </td><td id="fighter-sport">Загрузка...</td></tr>
         <tr><td>Победы</td><td id="fighter-wins">Загрузка...</td></tr>
         <tr><td>Поражения</td><td id="fighter-losses">Загрузка...</td></tr>
       </table>
@@ -286,16 +282,17 @@
   const currentYear = new Date().getFullYear();
 const age = currentYear - data.birthYear;
   // Заполнение данных бойца на странице
+  console.log(data);
   document.getElementById('fighter-name').textContent = data.name;
   document.getElementById('fighter-age').textContent = age;
   document.getElementById('fighter-height').textContent = data.height;
-  document.getElementById('fighter-weight').textContent = data.weight;
+document.getElementById('fighter-sport').textContent = data.sport?.name || 'Спорт не указан';
+document.getElementById('fighter-weight-category').textContent = data.weightCategory ? data.weightCategory.weight : 'Категория не указана';
   document.getElementById('fighter-wins').textContent = data.wins;
   document.getElementById('fighter-losses').textContent = data.losses;
   document.getElementById('fighter-class').textContent = data.class;
 
   // Заполнение фото бойца
-  document.getElementById('fighter-class').textContent = data.class;
 
 if (data.photo_url) {
   document.getElementById('fighter-photo').src = data.photo_url;

@@ -18,12 +18,9 @@ exports.getAllTrainers = async (req, res) => {
   }
 };
 
-// Получение одного тренера по ID
 exports.getTrainerById = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('Trainer ID:', id);
-
     const trainer = await Trainer.findByPk(id, {
       include: [
         {
@@ -33,7 +30,7 @@ exports.getTrainerById = async (req, res) => {
         },
         {
           model: Fighter,
-          attributes: ['name']
+          attributes: ['id', 'name']
         }
       ]
     });
@@ -42,9 +39,17 @@ exports.getTrainerById = async (req, res) => {
       return res.status(404).send('Тренер не найден');
     }
 
-    res.json(trainer);
+    const currentYear = new Date().getFullYear();
+    const birthYear = trainer.experience;
+    const age = birthYear ? (currentYear - birthYear) : null;
+
+    const trainerWithAge = {
+      ...trainer.toJSON(),
+      experience: age !== null ? age : 'Не указан'
+    };
+
+    res.json(trainerWithAge);
   } catch (error) {
-    console.error('Ошибка при получении тренера:', error);
     res.status(500).send('Ошибка при получении тренера');
   }
 };
@@ -83,14 +88,16 @@ exports.getFighterById = async (req, res) => {
 
 exports.addTrainer = async (req, res) => {
   try {
-    const { name, experience, teamId } = req.body;
-    const photoUrl = req.file ? req.file.path.replace(/\\/g, '/') : null; // Убираем лишние слэши в пути
+    const { name, experience, teamId, sports, achievements } = req.body;
+    const photoUrl = req.file ? req.file.path.replace(/\\/g, '/') : null;
 
     const newTrainer = await Trainer.create({
       name,
       experience,
       teamId,
-      photo_url: photoUrl, // Сохраняем путь к изображению
+      sports,        // <-- Добавлено
+      achievements,  // <-- Добавлено
+      photo_url: photoUrl,
     });
 
     res.status(201).json({
@@ -106,17 +113,18 @@ exports.addTrainer = async (req, res) => {
 exports.updateTrainer = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, teamId, experience } = req.body;
+    const { name, teamId, experience, sports, achievements } = req.body;
 
     let updatedData = {
       name,
       teamId,
-      experience
+      experience,
+      sports,       // <-- Добавлено
+      achievements, // <-- Добавлено
     };
 
-    // Если файл загружен, обновляем фото
     if (req.file) {
-      updatedData.photo_url = req.file.filename;  // Обновляем на поле photo_url
+      updatedData.photo_url = req.file.filename;
     }
 
     const trainer = await Trainer.findByPk(id);
@@ -125,7 +133,6 @@ exports.updateTrainer = async (req, res) => {
       return res.status(404).send('Тренер не найден');
     }
 
-    // Если загружаем новое фото — удаляем старое
     if (req.file && trainer.photo_url) {
       const oldPhotoPath = path.join(__dirname, '..', 'uploads', trainer.photo_url);
       if (fs.existsSync(oldPhotoPath)) {
@@ -133,16 +140,16 @@ exports.updateTrainer = async (req, res) => {
       }
     }
 
-    // Обновляем тренера в базе данных
     await trainer.update(updatedData);
 
-    // Отправляем обновленного тренера с новым фото (если оно есть)
     res.json({
       id: trainer.id,
       name: trainer.name,
       teamId: trainer.teamId,
       experience: trainer.experience,
-      photo_url: trainer.photo_url,  // Передаем путь к фото в ответе
+      sports: trainer.sports,           // <-- Добавлено
+      achievements: trainer.achievements, // <-- Добавлено
+      photo_url: trainer.photo_url,
     });
   } catch (error) {
     console.error('Ошибка при обновлении тренера:', error);

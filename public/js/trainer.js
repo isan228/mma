@@ -1,13 +1,15 @@
 // Отправка данных для добавления нового тренера
 function addTrainer(event) {
-  event.preventDefault(); // предотвращаем перезагрузку страницы
+  event.preventDefault();
 
   const name = document.getElementById('trainer-name').value;
   const teamName = document.getElementById('trainer-team').value;
   const experience = document.getElementById('trainer-experience').value;
-  const photo = document.getElementById('trainer-photo').files[0]; // получаем файл, а не значение
+  const sports = document.getElementById('trainer-sports').value;
+  const achievements = document.getElementById('trainer-achievements').value;
+  const photo = document.getElementById('trainer-photo').files[0];
 
-  if (!name || !teamName || !experience) {
+  if (!name || !teamName || !experience || !sports || !achievements) {
     alert('Пожалуйста, заполните все обязательные поля');
     return;
   }
@@ -23,31 +25,32 @@ function addTrainer(event) {
   formData.append('name', name);
   formData.append('teamId', teamId);
   formData.append('experience', experience);
+  formData.append('sports', sports);
+  formData.append('achievements', achievements);
 
   if (photo) {
-    formData.append('photo', photo); // только если выбрано фото
+    formData.append('photo', photo);
   }
 
   fetch('/api/trainer', {
     method: 'POST',
-    body: formData, // НЕ headers: 'Content-Type', иначе FormData сломается
+    body: formData,
   })
     .then(response => {
-      if (!response.ok) {
-        throw new Error('Не удалось добавить тренера');
-      }
+      if (!response.ok) throw new Error('Не удалось добавить тренера');
       return response.json();
     })
     .then(data => {
       console.log('Trainer added:', data);
       displayTrainers();
+      document.getElementById('trainer-form').reset(); // очищаем форму после добавления
+      document.getElementById('photo-preview').style.display = 'none';
     })
     .catch(err => {
       console.error('Error adding trainer:', err);
       alert('Ошибка при добавлении тренера');
     });
 }
-
 // Загрузка команд с поисковым запросом
 function loadTeams(query = '') {
   fetch(`/api/teams?q=${query}`)  // Добавляем параметр для поиска
@@ -88,39 +91,39 @@ function displayTrainers() {
     .then(response => response.json())
     .then(trainers => {
       const trainerList = document.getElementById('trainer-list');
-      trainerList.innerHTML = ''; // Очистка списка
+      trainerList.innerHTML = '';
 
       trainers.forEach(trainer => {
         const li = document.createElement('li');
-        
-        // Создаем изображение с проверкой на наличие URL
+
         const img = document.createElement('img');
         if (trainer.photo_url) {
-          img.src = trainer.photo_url;  // Если есть фото, устанавливаем URL
+          img.src = trainer.photo_url;
           img.alt = `Фото тренера ${trainer.name}`;
         } else {
-          img.src = 'default-photo-url.jpg';  // Указываем изображение по умолчанию
+          img.src = 'default-photo-url.jpg';
           img.alt = `Фото тренера ${trainer.name} (по умолчанию)`;
         }
-        
         img.style.width = '50px';
         img.style.height = '50px';
         img.style.marginRight = '10px';
 
-        // Добавляем информацию о тренере
         const text = document.createElement('span');
-        text.textContent = `${trainer.name} - ${trainer.team}`;
+        text.innerHTML = `
+          <strong>${trainer.name}</strong> - ${trainer.team} <br>
+          Опыт: ${trainer.experience} <br>
+          Виды спорта: ${trainer.sports || '-'} <br>
+          Достижения: ${trainer.achievements || '-'}
+        `;
 
         li.appendChild(img);
         li.appendChild(text);
 
-        // Кнопка для редактирования
         const editButton = document.createElement('button');
         editButton.textContent = 'Редактировать';
         editButton.classList.add('btn', 'btn-secondary', 'ms-2');
         editButton.onclick = () => fillFormWithTrainerData(trainer);
 
-        // Кнопка для удаления
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Удалить';
         deleteButton.classList.add('btn', 'btn-danger', 'ms-2');
@@ -135,27 +138,25 @@ function displayTrainers() {
     .catch(err => console.error('Error fetching trainers:', err));
 }
 
-
 function fillFormWithTrainerData(trainer) {
   document.getElementById('trainer-name').value = trainer.name;
   document.getElementById('trainer-team').value = trainer.team;
   document.getElementById('trainer-experience').value = trainer.experience;
+  document.getElementById('trainer-sports').value = trainer.sports || '';
+  document.getElementById('trainer-achievements').value = trainer.achievements || '';
 
   const photoInput = document.getElementById('trainer-photo');
-  const imgPreview = document.getElementById('photo-preview'); // Пытаемся найти элемент
+  const imgPreview = document.getElementById('photo-preview');
 
-  if (imgPreview) {  // Проверяем, существует ли элемент
+  if (imgPreview) {
     if (trainer.photo_url) {
       imgPreview.src = trainer.photo_url;
-      imgPreview.style.display = 'block'; // показываем картинку
+      imgPreview.style.display = 'block';
     } else {
-      imgPreview.style.display = 'none'; // скрываем картинку, если её нет
+      imgPreview.style.display = 'none';
     }
-  } else {
-    console.error('Не найден элемент для отображения фото');
   }
 
-  // Обновляем форму на редактирование
   const form = document.getElementById('trainer-form');
   form.removeEventListener('submit', addTrainer);
   form.addEventListener('submit', (event) => updateTrainer(event, trainer.id));
@@ -167,11 +168,13 @@ function updateTrainer(event, id) {
   const name = document.getElementById('trainer-name').value;
   const teamName = document.getElementById('trainer-team').value;
   const experience = document.getElementById('trainer-experience').value;
-  const photo = document.getElementById('trainer-photo').files[0]; // Вот тут правильно взять фото!
+  const sports = document.getElementById('trainer-sports').value;
+  const achievements = document.getElementById('trainer-achievements').value;
+  const photo = document.getElementById('trainer-photo').files[0];
 
   const teamId = document.querySelector(`#team-list option[value="${teamName}"]`)?.dataset.id;
 
-  if (!name || !teamId || !experience) {
+  if (!name || !teamId || !experience || !sports || !achievements) {
     alert('Пожалуйста, заполните все обязательные поля');
     return;
   }
@@ -180,23 +183,31 @@ function updateTrainer(event, id) {
   formData.append('name', name);
   formData.append('teamId', teamId);
   formData.append('experience', experience);
+  formData.append('sports', sports);
+  formData.append('achievements', achievements);
+
   if (photo) {
-    formData.append('photo', photo); // Только если выбрано новое фото
+    formData.append('photo', photo);
   }
 
   fetch(`/api/trainer/${id}`, {
     method: 'PUT',
-    body: formData, // ВАЖНО! НЕ ставим headers Content-Type!
+    body: formData,
   })
     .then(response => {
-      if (!response.ok) {
-        throw new Error('Не удалось обновить тренера');
-      }
+      if (!response.ok) throw new Error('Не удалось обновить тренера');
       return response.json();
     })
     .then(data => {
       console.log('Trainer updated:', data);
-      displayTrainers(); // Перезагружаем список тренеров
+      displayTrainers();
+      document.getElementById('trainer-form').reset();
+      document.getElementById('photo-preview').style.display = 'none';
+
+      // Вернуть обработчик формы на добавление (если нужно)
+      const form = document.getElementById('trainer-form');
+      form.removeEventListener('submit', updateTrainer);
+      form.addEventListener('submit', addTrainer);
     })
     .catch(err => {
       console.error('Ошибка при обновлении тренера:', err);

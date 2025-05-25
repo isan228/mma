@@ -6,19 +6,28 @@ module.exports = (sequelize, DataTypes) => {
   
   class Trainer extends Model {
     static associate(models) {
-      // Связь между тренером и командой
-      Trainer.belongsTo(models.Team, { foreignKey: 'teamId', as: 'team' }); // Связь с командой
-      Trainer.hasMany(models.Fighter, { foreignKey: 'trainerId' });  // Связь с бойцом
+      Trainer.belongsTo(models.Team, { foreignKey: 'teamId', as: 'team' });
+      Trainer.hasMany(models.Fighter, { foreignKey: 'trainerId' });
     }
   }
   
   Trainer.init({
-    name: DataTypes.STRING,  // Имя тренера
-    experience: DataTypes.STRING,  // Опыт тренера (например, "5 лет")
-    photo_url: DataTypes.STRING,  // Фото тренера
-    teamId: {  // Внешний ключ на команду
+    name: DataTypes.STRING,
+    experience: DataTypes.STRING,
+    photo_url: DataTypes.STRING,
+    teamId: {
       type: DataTypes.INTEGER,
-      allowNull: true,  // Это поле может быть пустым, если тренер не привязан к команде
+      allowNull: true,
+    },
+    sports: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      comment: 'Виды спорта, которыми занимается тренер (текстовое описание)',
+    },
+    achievements: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      comment: 'Заслуги тренера (текстовое описание)',
     },
   }, {
     sequelize,
